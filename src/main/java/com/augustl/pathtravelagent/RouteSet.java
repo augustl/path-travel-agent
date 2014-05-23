@@ -3,7 +3,6 @@ package com.augustl.pathtravelagent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RouteSet<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IRequest, T_RES> {
     private final List<ISegment> segmentTable = new ArrayList<ISegment>();

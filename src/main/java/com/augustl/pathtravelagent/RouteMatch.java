@@ -1,7 +1,5 @@
 package com.augustl.pathtravelagent;
 
-import java.util.List;
-
 public class RouteMatch<T_REQ extends IRequest> {
     private final T_REQ req;
     private final RouteMatchResult routeMatchResult;
