@@ -18,6 +18,11 @@ public class RouteBuilder<T_REQ extends IRequest, T_RES> {
         return this;
     }
 
+    public RouteBuilder<T_REQ, T_RES> genericSegment(ISegment segment) {
+        segments.add(segment);
+        return this;
+    }
+
     public Route<T_REQ, T_RES> build(RouteHandler<T_REQ, T_RES> handler) {
         return new Route<T_REQ, T_RES>(segments, handler);
     }

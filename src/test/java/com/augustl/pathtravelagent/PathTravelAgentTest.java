@@ -112,6 +112,22 @@ public class PathTravelAgentTest {
         assertNull(pta.match(new TestReq("/bar", "yay")));
     }
 
+    @Test
+    public void customSegment() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().pathSegment("projects").segment(new TestSegment("projectId", "666")).buildRoute(new RouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("hello " + match.getStringRouteMatchResult("projectId"));
+                }
+            })
+            .build();
+
+        assertEquals(pta.match(new TestReq("/projects/666")).getBody(), "hello 666");
+        assertEquals(pta.match(new TestReq("/projects/666123")).getBody(), "hello 666123");
+        assertNull(pta.match(new TestReq("/projects/1")));
+    }
+
     private class TestReq implements IRequest {
         private final String path;
         private final Object extras;
@@ -154,6 +170,29 @@ public class PathTravelAgentTest {
         @Override
         public TestRes call(RouteMatch<TestReq> match) {
             return new TestRes(this.ret);
+        }
+    }
+
+    private class TestSegment implements ISegment {
+        private final String paramName;
+        private final String requiredValue;
+        public TestSegment(String paramName, String requiredValue) {
+            this.paramName = paramName;
+            this.requiredValue = requiredValue;
+        }
+
+        @Override
+        public RouteMatchResult.IResult matchPathSegment(String pathSegment) {
+            if (pathSegment.startsWith(this.requiredValue)) {
+                return new RouteMatchResult.StringResult(pathSegment);
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public String getSegmentName() {
+            return this.paramName;
         }
     }
 }
