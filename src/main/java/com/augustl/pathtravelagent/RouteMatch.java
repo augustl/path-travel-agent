@@ -18,4 +18,8 @@ public class RouteMatch<T_REQ extends IRequest> {
     public Integer getIntegerRouteMatchResult(String paramName) {
         return this.routeMatchResult.getIntegerMatch(paramName);
     }
+
+    public String getStringRouteMatchResult(String paramName) {
+        return this.routeMatchResult.getStringMatch(paramName);
+    }
 }
