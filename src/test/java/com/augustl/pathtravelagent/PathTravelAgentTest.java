@@ -92,6 +92,30 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/projects/1")).getBody(), "Hello 1");
     }
 
+    @Test
+    public void routeBasedOnRequest() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRouteString("/foo", new RouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    if (match.getRequest().extras == "yay") {
+                        return new TestRes("we got yay");
+                    } else {
+                        return null;
+                    }
+                }
+            })
+            .build();
+
+        assertEquals(pta.match(new TestReq("/foo", "yay")).getBody(), "we got yay");
+        assertNull(pta.match(new TestReq("/foo", "not yay")));
+        assertNull(pta.match(new TestReq("/bar", "yay")));
+
+
+//        assertEquals(pta.match(new TestReq("/projects/1")).getBody(), "Hello 1");
+
+    }
+
     private class TestReq implements IRequest {
         private final String path;
         private final Object extras;
