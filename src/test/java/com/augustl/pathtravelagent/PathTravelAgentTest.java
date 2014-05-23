@@ -95,7 +95,7 @@ public class PathTravelAgentTest {
     @Test
     public void routeBasedOnRequest() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
-            .newRouteString("/foo", new RouteHandler<TestReq, TestRes>() {
+            .newRoute().pathSegment("foo").buildRoute(new RouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     if (match.getRequest().extras == "yay") {
