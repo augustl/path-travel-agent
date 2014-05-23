@@ -1,9 +1,7 @@
 package com.augustl.pathtravelagent;
 
-import java.util.Arrays;
-
 public class RouteStringBuilder<T_REQ extends IRequest, T_RES> {
-    public Route<T_REQ, T_RES> build(String unparsedPath, RouteHandler<T_REQ, T_RES> handler) {
+    public Route<T_REQ, T_RES> build(String unparsedPath, IRouteHandler<T_REQ, T_RES> handler) {
         if (unparsedPath.startsWith("/")) {
             unparsedPath = unparsedPath.substring(1);
         }

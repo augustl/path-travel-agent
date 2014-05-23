@@ -47,7 +47,7 @@ public class PathTravelAgentTest {
     @Test
     public void matchesWithCustomRequest() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
-            .newRoute().pathSegment("foo").buildRoute(new RouteHandler<TestReq, TestRes>() {
+            .newRoute().pathSegment("foo").buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     return new TestRes("Hello " + match.getRequest().extras);
@@ -61,7 +61,7 @@ public class PathTravelAgentTest {
     @Test
     public void matchesWithNumberSegment() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
-            .newRoute().pathSegment("projects").numberSegment("projectId").buildRoute(new RouteHandler<TestReq, TestRes>() {
+            .newRoute().pathSegment("projects").numberSegment("projectId").buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     return new TestRes("Hello " + (match.getIntegerRouteMatchResult("projectId") + 1));
@@ -80,7 +80,7 @@ public class PathTravelAgentTest {
     public void matchesWithStringConvenienceApi() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
             .newRouteString("/foo", new TestHandler("hello, foo"))
-            .newRouteString("/projects/$projectId", new RouteHandler<TestReq, TestRes>() {
+            .newRouteString("/projects/$projectId", new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     return new TestRes("Hello " + match.getIntegerRouteMatchResult("projectId"));
@@ -95,7 +95,7 @@ public class PathTravelAgentTest {
     @Test
     public void routeBasedOnRequest() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
-            .newRoute().pathSegment("foo").buildRoute(new RouteHandler<TestReq, TestRes>() {
+            .newRoute().pathSegment("foo").buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     if (match.getRequest().extras == "yay") {
@@ -115,7 +115,7 @@ public class PathTravelAgentTest {
     @Test
     public void customSegment() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
-            .newRoute().pathSegment("projects").segment(new TestSegment("projectId", "666")).buildRoute(new RouteHandler<TestReq, TestRes>() {
+            .newRoute().pathSegment("projects").segment(new TestSegment("projectId", "666")).buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     return new TestRes("hello " + match.getStringRouteMatchResult("projectId"));
@@ -161,7 +161,7 @@ public class PathTravelAgentTest {
         }
     }
 
-    private class TestHandler implements RouteHandler<TestReq, TestRes> {
+    private class TestHandler implements IRouteHandler<TestReq, TestRes> {
         private final String ret;
         public TestHandler(String ret) {
             this.ret = ret;

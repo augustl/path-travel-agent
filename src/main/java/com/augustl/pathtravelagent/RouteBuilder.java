@@ -23,7 +23,7 @@ public class RouteBuilder<T_REQ extends IRequest, T_RES> {
         return this;
     }
 
-    public Route<T_REQ, T_RES> build(RouteHandler<T_REQ, T_RES> handler) {
+    public Route<T_REQ, T_RES> build(IRouteHandler<T_REQ, T_RES> handler) {
         return new Route<T_REQ, T_RES>(segments, handler);
     }
 }

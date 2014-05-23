@@ -68,15 +68,15 @@ public class PathTravelAgent<T_REQ extends IRequest, T_RES> {
             return this;
         }
 
-        public Builder<TT_REQ, TT_RES> buildRoute(RouteHandler<TT_REQ, TT_RES> handler) {
+        public Builder<TT_REQ, TT_RES> buildRoute(IRouteHandler<TT_REQ, TT_RES> handler) {
             this.ensureIsBuildingRoute();
             this.routes.add(this.currentRouteBuilder.build(handler));
             this.currentRouteBuilder = null;
             return this;
         }
 
-        public Builder<TT_REQ, TT_RES> newRouteString(String unparsedPath, RouteHandler<TT_REQ, TT_RES> handler) {
-            this.routes.add(new RouteStringBuilder<TT_REQ,  TT_RES>().build(unparsedPath, handler));
+        public Builder<TT_REQ, TT_RES> newRouteString(String unparsedPath, IRouteHandler<TT_REQ, TT_RES> handler) {
+            this.routes.add(new RouteStringBuilder<TT_REQ, TT_RES>().build(unparsedPath, handler));
             return this;
         }
 
