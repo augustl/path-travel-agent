@@ -110,10 +110,6 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/foo", "yay")).getBody(), "we got yay");
         assertNull(pta.match(new TestReq("/foo", "not yay")));
         assertNull(pta.match(new TestReq("/bar", "yay")));
-
-
-//        assertEquals(pta.match(new TestReq("/projects/1")).getBody(), "Hello 1");
-
     }
 
     private class TestReq implements IRequest {
