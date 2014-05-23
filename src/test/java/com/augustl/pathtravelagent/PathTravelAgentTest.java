@@ -128,6 +128,21 @@ public class PathTravelAgentTest {
         assertNull(pta.match(new TestReq("/projects/1")));
     }
 
+    @Test
+    public void matchesNestedPathWithParams() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().pathSegment("projects").buildRoute(new TestHandler("projects list"))
+            .newRoute().pathSegment("projects").numberSegment("projectId").buildRoute(new TestHandler("single project"))
+            .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").buildRoute(new TestHandler("todos list"))
+            .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").numberSegment("todoId").buildRoute(new TestHandler("single todo"))
+            .build();
+
+        assertEquals(pta.match(new TestReq("/projects")).getBody(), "projects list");
+        assertEquals(pta.match(new TestReq("/projects/123")).getBody(), "single project");
+        assertEquals(pta.match(new TestReq("/projects/123/todos")).getBody(), "todos list");
+        assertEquals(pta.match(new TestReq("/projects/123/todos/456")).getBody(), "single todo");
+    }
+
     private class TestReq implements IRequest {
         private final String path;
         private final Object extras;
