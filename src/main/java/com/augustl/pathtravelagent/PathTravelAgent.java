@@ -3,17 +3,17 @@ package com.augustl.pathtravelagent;
 import java.util.*;
 
 public class PathTravelAgent<T_REQ extends IRequest, T_RES> {
-    private final HashMap<Integer, RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES>> routes;
+    private final HashMap<String, RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES>> routes;
 
     public PathTravelAgent(List<Route<T_REQ, T_RES>> routes) {
-        this.routes = new HashMap<Integer, RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES>>(routes.size());
+        this.routes = new HashMap<String, RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES>>(routes.size());
         for (Route<T_REQ, T_RES> route : routes) {
-            int hashCode = route.getRouteHashCode();
-            if (!this.routes.containsKey(hashCode)) {
-                this.routes.put(hashCode, new RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES>());
+            String segmentName = route.getFirstSegmentName();
+            if (!this.routes.containsKey(segmentName)) {
+                this.routes.put(segmentName, new RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES>());
             }
 
-            this.routes.get(hashCode).addRoute(route);
+            this.routes.get(segmentName).addRoute(route);
         }
     }
 
@@ -21,7 +21,7 @@ public class PathTravelAgent<T_REQ extends IRequest, T_RES> {
         String[] pathSegmentsAry = req.getPath().split("/");
         List<String> pathSegments = Arrays.asList(pathSegmentsAry).subList(1, pathSegmentsAry.length);
 
-        RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES> routeSet = this.routes.get(pathSegments.get(0).hashCode());
+        RouteSet<Route<T_REQ, T_RES>, T_REQ, T_RES> routeSet = this.routes.get(pathSegments.get(0));
         if (routeSet == null) return null;
 
         return routeSet.match(req, pathSegments);

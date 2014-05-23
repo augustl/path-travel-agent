@@ -11,8 +11,8 @@ public class Route<T_REQ extends IRequest, T_RES> {
         this.handler = handler;
     }
 
-    public int getRouteHashCode() {
-        return this.segments.get(0).getSegmentName().hashCode();
+    public String getFirstSegmentName() {
+        return this.segments.get(0).getSegmentName();
     }
 
     public List<ISegment> getSegments() {
