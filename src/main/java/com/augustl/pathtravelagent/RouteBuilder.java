@@ -1,5 +1,8 @@
 package com.augustl.pathtravelagent;
 
+import com.augustl.pathtravelagent.segment.NumberSegment;
+import com.augustl.pathtravelagent.segment.PathSegment;
+
 import java.util.ArrayList;
 
 public class RouteBuilder<T_REQ extends IRequest, T_RES> {

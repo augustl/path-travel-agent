@@ -1,4 +1,7 @@
-package com.augustl.pathtravelagent;
+package com.augustl.pathtravelagent.segment;
+
+import com.augustl.pathtravelagent.ISegment;
+import com.augustl.pathtravelagent.RouteMatchResult;
 
 public class NumberSegment implements ISegment {
     private final String paramName;
