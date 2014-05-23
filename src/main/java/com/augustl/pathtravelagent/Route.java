@@ -12,7 +12,7 @@ public class Route<T_REQ extends IRequest, T_RES> {
     }
 
     public int getRouteHashCode() {
-        return this.segments.get(0).getPathHashCode();
+        return this.segments.get(0).getSegmentName().hashCode();
     }
 
     public List<ISegment> getSegments() {

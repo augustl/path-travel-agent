@@ -8,11 +8,6 @@ public class PathSegment implements ISegment {
     }
 
     @Override
-    public int getPathHashCode() {
-        return this.pathName.hashCode();
-    }
-
-    @Override
     public String getSegmentName() {
         return this.pathName;
     }

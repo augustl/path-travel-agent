@@ -15,7 +15,7 @@ public class RouteSet<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IReques
             ISegment segment = routeSegments.get(i);
             if (i < segmentTable.size()) {
                 ISegment storedSegment = segmentTable.get(i);
-                if (storedSegment.getPathHashCode() != segment.getPathHashCode()) {
+                if (storedSegment.getSegmentName().hashCode() != segment.getSegmentName().hashCode()) {
                     throw new IllegalArgumentException("Route segment at index " + i + " did not match the segment already in route set for that index.");
                 }
             } else {
