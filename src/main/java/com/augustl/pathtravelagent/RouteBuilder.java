@@ -10,6 +10,11 @@ public class RouteBuilder<T_REQ extends IRequest, T_RES> {
         return this;
     }
 
+    public RouteBuilder<T_REQ, T_RES> numberSegment(String paramName) {
+        segments.add(new NumberSegment(paramName));
+        return this;
+    }
+
     public Route<T_REQ, T_RES> build(RouteHandler<T_REQ, T_RES> handler) {
         return new Route<T_REQ, T_RES>(segments, handler);
     }

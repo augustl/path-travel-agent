@@ -58,6 +58,24 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/foo", "to you!")).getBody(), "Hello to you!");
     }
 
+    @Test
+    public void matchesWithNumberSegment() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().pathSegment("projects").numberSegment("projectId").buildRoute(new RouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("Hello " + (match.getIntegerRouteMatchResult("projectId") + 1));
+                }
+            })
+            .build();
+
+        assertEquals(pta.match(new TestReq("/projects/1")).getBody(), "Hello 2");
+        assertEquals(pta.match(new TestReq("/projects/1321")).getBody(), "Hello 1322");
+        assertNull(pta.match(new TestReq("/projects/123abc")));
+        assertNull(pta.match(new TestReq("/projects/123/doesnotexist")));
+
+    }
+
     private class TestReq implements IRequest {
         private final String path;
         private final Object extras;

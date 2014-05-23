@@ -19,7 +19,7 @@ public class Route<T_REQ extends IRequest, T_RES> {
         return this.segments;
     }
 
-    public T_RES match(T_REQ req, List<String> pathSegments) {
-        return this.handler.call(new RouteMatch<T_REQ>(req, pathSegments));
+    public T_RES match(T_REQ req, RouteMatchResult routeMatchResult) {
+        return this.handler.call(new RouteMatch<T_REQ>(req, routeMatchResult));
     }
 }

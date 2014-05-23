@@ -36,16 +36,18 @@ public class RouteSet<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IReques
             return null;
         }
 
+        RouteMatchResult routeMatchResult = new RouteMatchResult();
+
         for (int i = 0; i < pathSegments.size(); i++) {
             String pathSegment = pathSegments.get(i);
             ISegment storedSegment = segmentTable.get(i);
-            Object match = storedSegment.matchPathSegment(pathSegment);
-            if (match == null) {
+            RouteMatchResult.IResult matchResult = storedSegment.matchPathSegment(pathSegment);
+            boolean matched = routeMatchResult.addPossibleMatch(storedSegment.getSegmentName(), matchResult);
+            if (!matched) {
                 return null;
             }
         }
 
-        // TODO: We shouldn't pass pathSegmens directly, we should pass the parsed version with params etc.
-        return route.match(req, pathSegments);
+        return route.match(req, routeMatchResult);
     }
 }

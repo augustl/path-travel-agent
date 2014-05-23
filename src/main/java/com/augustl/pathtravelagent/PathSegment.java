@@ -13,7 +13,16 @@ public class PathSegment implements ISegment {
     }
 
     @Override
-    public Object matchPathSegment(String pathSegment) {
-        return pathSegment.equals(this.pathName);
+    public String getSegmentName() {
+        return this.pathName;
+    }
+
+    @Override
+    public RouteMatchResult.IResult matchPathSegment(String pathSegment) {
+        if (pathSegment.equals(this.pathName)) {
+            return RouteMatchResult.successResult;
+        } else {
+            return null;
+        }
     }
 }
