@@ -78,7 +78,7 @@ Let's look at handler, here's `listTodosHandler`.
     IRouteHandler<MyReq, MyRes> listTodosHandler = new IRoutesHandler<MyReq, MyRes>() {
         @Override
         public MyRes call(RouteMatch<MyReq> match) {
-            if (match.getRequest.getMethod() == "GET") {
+            if (match.getRequest().getMethod() == "GET") {
                 // Fetch the value from the `numberSegment` in the route.
                 Integer projectId = match.getIntegerRouteMatchResult("projectId")
                 return new MyRes("Call business logic to get actual list of todos for " + projectId);
