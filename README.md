@@ -31,6 +31,7 @@ The `com.augustl.pathtravelagent.PathTravelAgent` has two generics, the types th
 ```java
 class MyReq implements IRequest {
     private final String path;
+    // A bare bones request implementation
     public MyReq(String path) {
         this.path = path;
     }
@@ -50,6 +51,7 @@ class MyReq implements IRequest {
     private final String path;
     private final String method;
     private final String accept;
+    // Only getPath() is used by the system - other fields are metadata for yourself.
     public MyReq(String path, String method, String accept) {
         this.path = path;
         this.method = method;
@@ -92,6 +94,8 @@ Let's look at handler, here's `listTodosHandler`.
 IRouteHandler<MyReq, MyRes> listTodosHandler = new IRoutesHandler<MyReq, MyRes>() {
     @Override
     public MyRes call(RouteMatch<MyReq> match) {
+        // You call your own getMethod(), we don't care, we just call your handler
+        // when the path matches.
         if (match.getRequest().getMethod() == "GET") {
             // Fetch the value from the `numberSegment` in the route.
             Integer projectId = match.getIntegerRouteMatchResult("projectId");
