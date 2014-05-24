@@ -129,6 +129,11 @@ myRoutesSegments.add(new NumberSegment("projectId"));
 myRoutesSegments.add(new PathSegment("todos"));
 routes.add(new Route<MyReq, MyRes>(myRouteSegments, listTodosHandler));
 new PathTravelAgent<MyReq, MyRes>(routes);
+
+// Which is the same as...
+PathTravelAgent.Builder.<MyReq,MyRes>start()
+    .addRoute(new Route<MyReq, MyRes>(myRouteSegments, listTodosHandler))
+    .build();
 ```
 
 You can use the manual list building API as well as the builder (just `segment` instead of `pathSegment` etc) to add any segment you want, as long as it implements ISegment. This allows custom parsing and handling of path segment.
