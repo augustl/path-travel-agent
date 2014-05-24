@@ -10,7 +10,7 @@ Made to be embedded by other engines that wants fast and type-safe request/respo
 
 Install from maven central. **Note**: current version is not actually present in maven central. It's still a unpublished snapshot release.
 
-```java
+```xml
 <dependency>
   <groupId>com.augustl</groupId>
   <artifactId>path-travel-agent</artifactId>
