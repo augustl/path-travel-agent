@@ -23,4 +23,9 @@ public class PathSegment implements ISegment {
             return null;
         }
     }
+
+    @Override
+    public boolean isParametric() {
+        return false;
+    }
 }

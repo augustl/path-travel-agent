@@ -143,6 +143,24 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/projects/123/todos/456")).getBody(), "single todo");
     }
 
+    @Test
+    public void matchesNestedTreepaths() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().pathSegment("foo").pathSegment("bar").buildRoute(new TestHandler("bar"))
+            .newRoute().pathSegment("foo").pathSegment("bar").pathSegment("subbar").buildRoute(new TestHandler("subbar"))
+            .newRoute().pathSegment("foo").pathSegment("baz").buildRoute(new TestHandler("baz"))
+            .newRoute().pathSegment("foo").pathSegment("baz").pathSegment("subbaz").buildRoute(new TestHandler("subbaz"))
+            .newRoute().pathSegment("foo").pathSegment("baz").pathSegment("otherbaz").buildRoute(new TestHandler("otherbaz"))
+            .build();
+
+        assertNull(pta.match(new TestReq("/foo")));
+        assertEquals(pta.match(new TestReq("/foo/bar")).getBody(), "bar");
+        assertEquals(pta.match(new TestReq("/foo/baz")).getBody(), "baz");
+        assertEquals(pta.match(new TestReq("/foo/bar/subbar")).getBody(), "subbar");
+        assertEquals(pta.match(new TestReq("/foo/baz/subbaz")).getBody(), "subbaz");
+        assertEquals(pta.match(new TestReq("/foo/baz/otherbaz")).getBody(), "otherbaz");
+    }
+
     private class TestReq implements IRequest {
         private final String path;
         private final Object extras;
@@ -208,6 +226,11 @@ public class PathTravelAgentTest {
         @Override
         public String getSegmentName() {
             return this.paramName;
+        }
+
+        @Override
+        public boolean isParametric() {
+            return true;
         }
     }
 }

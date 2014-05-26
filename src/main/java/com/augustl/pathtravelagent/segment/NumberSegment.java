@@ -24,4 +24,9 @@ public class NumberSegment implements ISegment {
             return null;
         }
     }
+
+    @Override
+    public boolean isParametric() {
+        return true;
+    }
 }
