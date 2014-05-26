@@ -7,6 +7,11 @@ public class RouteStringBuilder<T_REQ extends IRequest, T_RES> {
         }
 
         RouteBuilder<T_REQ, T_RES> routeBuilder = new RouteBuilder<T_REQ, T_RES>();
+
+        if (unparsedPath.length() == 0) {
+            return routeBuilder.build(handler);
+        }
+
         String[] pathSegments = unparsedPath.split("/");
         for (String pathSegment : pathSegments) {
             if (pathSegment.startsWith("$")) {

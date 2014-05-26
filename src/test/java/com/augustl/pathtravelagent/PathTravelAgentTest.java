@@ -79,6 +79,7 @@ public class PathTravelAgentTest {
     @Test
     public void matchesWithStringConvenienceApi() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRouteString("/", new TestHandler("hello, root"))
             .newRouteString("/foo", new TestHandler("hello, foo"))
             .newRouteString("/projects/$projectId", new IRouteHandler<TestReq, TestRes>() {
                 @Override
@@ -88,6 +89,7 @@ public class PathTravelAgentTest {
             })
             .build();
 
+        assertEquals(pta.match(new TestReq("/")).getBody(), "hello, root");
         assertEquals(pta.match(new TestReq("/foo")).getBody(), "hello, foo");
         assertEquals(pta.match(new TestReq("/projects/1")).getBody(), "Hello 1");
     }
