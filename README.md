@@ -114,6 +114,7 @@ There are convenience methods for building routes. Here are a bunch of equivalen
 
 ```java
 PathTravelAgent.Builder.<MyReq,MyRes>start()
+    .newRoute().buildRoute(homePageHandler)
     .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").buildRoute(listTodosHandler)
     .build();
 
@@ -125,16 +126,22 @@ PathTravelAgent.Builder.<MyReq,MyRes>start()
 
 // Which is the same as...
 List<Route<MyReq, MyRes>> routes = new ArrayList<Route<MyReq, MyRes>();
-List<ISegment> myRouteSegments = new ArrayList<ISegment>();
-myRoutesSegments.add(new PathSegment("projects"));
-myRoutesSegments.add(new NumberSegment("projectId"));
-myRoutesSegments.add(new PathSegment("todos"));
-routes.add(new Route<MyReq, MyRes>(myRouteSegments, listTodosHandler));
+
+List<ISegment> myHomeRouteSegments = new ArrayList<ISegment>();
+routes.add(new Route<MyReq, MyRes>(myHomeRouteSegments, homePageHandler));
+
+myTodosRouteSegments = new ArrayList<ISegment>();
+myTodosRoutesSegments.add(new PathSegment("projects"));
+myTodosRoutesSegments.add(new NumberSegment("projectId"));
+myTodosRoutesSegments.add(new PathSegment("todos"));
+routes.add(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler));
+
 new PathTravelAgent<MyReq, MyRes>(routes);
 
 // Which is the same as...
 PathTravelAgent.Builder.<MyReq,MyRes>start()
-    .addRoute(new Route<MyReq, MyRes>(myRouteSegments, listTodosHandler))
+    .addRoute(new Route<MyReq, MyRes>(myHomeRouteSegments, homePageHandler))
+    .addRoute(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler))
     .build();
 ```
 
