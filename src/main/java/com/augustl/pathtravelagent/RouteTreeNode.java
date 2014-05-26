@@ -7,7 +7,6 @@ import java.util.List;
 public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IRequest, T_RES> {
     private final HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> namedChildren = new HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>();
     private final HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
-    //    private final List<Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new ArrayList<Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
     private Route<T_REQ, T_RES> route;
 
     private class Pair<A, B> {
