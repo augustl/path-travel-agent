@@ -78,6 +78,7 @@ There are many ways to create a router. Here's the most flexible one, the builde
 
 ```java
 PathTravelAgent<MyReq, MyRes> pta = PathTravelAgent.Builder.<MyReq,MyRes>start()
+    .newRoute().buildRoute(homePageHandler)
     .newRoute().pathSegment("projects").buildRoute(listProjectsHandler)
     .newRoute().pathSegment("projects").numberSegment("projectId").buildRoute(showProjectHandler)
     .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").buildRoute(listTodosHandler)
@@ -118,6 +119,7 @@ PathTravelAgent.Builder.<MyReq,MyRes>start()
 
 // Which is the same as...
 PathTravelAgent.Builder.<MyReq,MyRes>start()
+    .newRouteString("/", homePageHandler)
     .newRouteString("/projects/$projectId/todos", listTodosHandler)
     .build();
 
