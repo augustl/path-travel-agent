@@ -2,11 +2,11 @@ package com.augustl.pathtravelagent;
 
 public class RouteStringBuilder<T_REQ extends IRequest, T_RES> {
     public Route<T_REQ, T_RES> build(String unparsedPath, IRouteHandler<T_REQ, T_RES> handler) {
+        RouteBuilder<T_REQ, T_RES> routeBuilder = new RouteBuilder<T_REQ, T_RES>();
+
         if (unparsedPath.startsWith("/")) {
             unparsedPath = unparsedPath.substring(1);
         }
-
-        RouteBuilder<T_REQ, T_RES> routeBuilder = new RouteBuilder<T_REQ, T_RES>();
 
         if (unparsedPath.length() == 0) {
             return routeBuilder.build(handler);
