@@ -166,13 +166,15 @@ Path Travel Agent is *very* fast.
 
 ```
 PathTravelAgentBenchmark.largeRouter: [measured 10 out of 15 rounds, threads: 1 (sequential)]
- round: 0.04 [+- 0.01], round.block: 0.00 [+- 0.00], round.gc: 0.00 [+- 0.00], GC.calls: 2, GC.time: 0.02, time.total: 0.74, time.warmup: 0.37, time.bench: 0.37
+ round: 0.04 [+- 0.01], round.block: 0.00 [+- 0.00], round.gc: 0.00 [+- 0.00], \
+ GC.calls: 2, GC.time: 0.02, time.total: 0.74, time.warmup: 0.37, time.bench: 0.37
 
 PathTravelAgentBenchmark.sparkRouter: [measured 10 out of 15 rounds, threads: 1 (sequential)]
- round: 0.66 [+- 0.03], round.block: 0.00 [+- 0.00], round.gc: 0.00 [+- 0.00], GC.calls: 11, GC.time: 0.02, time.total: 10.30, time.warmup: 3.72, time.bench: 6.58
+ round: 0.66 [+- 0.03], round.block: 0.00 [+- 0.00], round.gc: 0.00 [+- 0.00], \
+ GC.calls: 11, GC.time: 0.02, time.total: 10.30, time.warmup: 3.72, time.bench: 6.58
 ```
 
-Comparing Path Travel Agent against spark, using a route set with 25 paths, we spend 0.37 seconds while spark spends 6.58 seconds.
+We spend 0.37 seconds, while [spark](https://github.com/perwendel/spark/) spends 6.58 seconds.
 
 This is because the routes is stored in a trie-like data structure. Traditionally, routers (spark included) stores the routes in an array. This means that we at worst have to look through all the paths to find a match. A trie exploits the fact that most URLs share a structure (for example, /people, /people/$personId and /people/$personId/friends). Going through the chunks (the stuff between the slashes) and only touching a chunk once is therefore much more efficient.
 
