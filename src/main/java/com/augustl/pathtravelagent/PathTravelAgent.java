@@ -4,7 +4,7 @@ import java.util.*;
 
 public class PathTravelAgent<T_REQ extends IRequest, T_RES> {
     private final RouteTreeNode<Route<T_REQ, T_RES>, T_REQ, T_RES> routeTreeRoot;
-
+    private final List<String> EMPTY_PATH_SEGMENTS = new ArrayList<String>();
 
     public PathTravelAgent(List<Route<T_REQ, T_RES>> routes) {
         this.routeTreeRoot = new RouteTreeNode<Route<T_REQ, T_RES>, T_REQ, T_RES>();
@@ -15,8 +15,12 @@ public class PathTravelAgent<T_REQ extends IRequest, T_RES> {
 
     public T_RES match(T_REQ req) {
         String[] pathSegmentsAry = req.getPath().split("/");
-        List<String> pathSegments = Arrays.asList(pathSegmentsAry).subList(1, pathSegmentsAry.length);
-        return this.routeTreeRoot.match(req, pathSegments);
+        if (pathSegmentsAry.length == 0) {
+            return this.routeTreeRoot.match(req, EMPTY_PATH_SEGMENTS);
+        } else {
+            List<String> pathSegments = Arrays.asList(pathSegmentsAry).subList(1, pathSegmentsAry.length);
+            return this.routeTreeRoot.match(req, pathSegments);
+        }
     }
 
     public static class Builder<TT_REQ extends IRequest, TT_RES> {

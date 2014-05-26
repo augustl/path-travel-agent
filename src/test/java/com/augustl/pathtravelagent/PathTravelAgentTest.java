@@ -161,6 +161,17 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/foo/baz/otherbaz")).getBody(), "otherbaz");
     }
 
+    @Test
+    public void rootRoute() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().buildRoute(new TestHandler("root"))
+            .newRoute().pathSegment("foo").buildRoute(new TestHandler("foo"))
+            .build();
+
+        assertEquals(pta.match(new TestReq("/")).getBody(), "root");
+        assertEquals(pta.match(new TestReq("/foo")).getBody(), "foo");
+    }
+
     private class TestReq implements IRequest {
         private final String path;
         private final Object extras;
