@@ -151,6 +151,8 @@ routes.add(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler));
 new PathTravelAgent<MyReq, MyRes>(routes);
 ```
 
+If you mutate the lists after passing them to the `PathTravelAgent` constructor, everything will crash and burn in many horrible and creative ways.
+
 ### Creating a router by combining builder and data structures
 
 ```java
