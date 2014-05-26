@@ -174,7 +174,7 @@ PathTravelAgentBenchmark.sparkRouter: [measured 10 out of 15 rounds, threads: 1 
 
 Comparing Path Travel Agent against spark, using a route set with 25 paths, we spend 0.37 seconds while spark spends 6.58 seconds.
 
-This is because the routes is stored in a trie-like tree structure. Traditionally, routers (spark included) stores the routes in an array. This means that we at worst have to look through all the paths to find a match. A trie exploits the fact that most URLs share a structure (for example, /people, /people/$personId and /people/$personId/friends). Going through the chunks (the stuff between the slashes) and only touching a chunk once is therefore much more efficient.
+This is because the routes is stored in a trie-like data structure. Traditionally, routers (spark included) stores the routes in an array. This means that we at worst have to look through all the paths to find a match. A trie exploits the fact that most URLs share a structure (for example, /people, /people/$personId and /people/$personId/friends). Going through the chunks (the stuff between the slashes) and only touching a chunk once is therefore much more efficient.
 
 ## License
 
