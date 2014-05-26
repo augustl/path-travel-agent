@@ -28,6 +28,18 @@ public class PathTravelAgentBenchmark extends AbstractBenchmark {
         "/projects/$projectId/messages/$messageId/replies/$replyId",
         "/projects/$projectId/permissions",
         "/projects/$projectId/permissions/$permissionId",
+        "/users",
+        "/users/$userId",
+        "/users/$userId/messages",
+        "/users/$userId/messages/$messageId",
+        "/repos",
+        "/repos/$repoId",
+        "/repos/$repoId/pull_requests",
+        "/repos/$repoId/pull_requests/$pullRequestId",
+        "/repos/$repoId/pull_requests/$pullRequestId/comments",
+        "/repos/$repoId/pull_requests/$pullRequestId/comments/$commentId",
+        "/repos/$repoId/pull_requests/$pullRequestId/comments/$commentId/replies",
+        "/repos/$repoId/pull_requests/$pullRequestId/comments/$commentId/replies/$replyId"
     };
     private static final int COUNT = 50000;
     private static final List<TestReq> requests = new ArrayList<TestReq>(COUNT);
