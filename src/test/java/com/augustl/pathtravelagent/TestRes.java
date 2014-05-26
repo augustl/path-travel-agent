@@ -1,0 +1,13 @@
+package com.augustl.pathtravelagent;
+
+class TestRes {
+    private final String body;
+
+    public TestRes(String body) {
+        this.body = body;
+    }
+
+    public String getBody() {
+        return this.body;
+    }
+}

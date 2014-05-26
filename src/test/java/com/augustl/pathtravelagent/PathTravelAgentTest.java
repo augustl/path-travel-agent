@@ -50,7 +50,7 @@ public class PathTravelAgentTest {
             .newRoute().pathSegment("foo").buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
-                    return new TestRes("Hello " + match.getRequest().extras);
+                    return new TestRes("Hello " + match.getRequest().getExtras());
                 }
             })
             .build();
@@ -100,7 +100,7 @@ public class PathTravelAgentTest {
             .newRoute().pathSegment("foo").buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
-                    if (match.getRequest().extras == "yay") {
+                    if (match.getRequest().getExtras() == "yay") {
                         return new TestRes("we got yay");
                     } else {
                         return null;
@@ -174,71 +174,4 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/foo")).getBody(), "foo");
     }
 
-    private class TestReq implements IRequest {
-        private final String path;
-        private final Object extras;
-
-        public TestReq(String path) {
-            this.path = path;
-            this.extras = null;
-        }
-
-        public TestReq(String path, Object extras) {
-            this.path = path;
-            this.extras = extras;
-        }
-
-
-        @Override
-        public String getPath() {
-            return this.path;
-        }
-    }
-
-    private class TestRes {
-        private final String body;
-
-        public TestRes(String body) {
-            this.body = body;
-        }
-
-        public String getBody() {
-            return this.body;
-        }
-    }
-
-    private class TestHandler implements IRouteHandler<TestReq, TestRes> {
-        private final String ret;
-        public TestHandler(String ret) {
-            this.ret = ret;
-        }
-
-        @Override
-        public TestRes call(RouteMatch<TestReq> match) {
-            return new TestRes(this.ret);
-        }
-    }
-
-    private class TestSegment implements ISegmentParametric {
-        private final String paramName;
-        private final String requiredValue;
-        public TestSegment(String paramName, String requiredValue) {
-            this.paramName = paramName;
-            this.requiredValue = requiredValue;
-        }
-
-        @Override
-        public RouteMatchResult.IResult matchPathSegment(String pathSegment) {
-            if (pathSegment.startsWith(this.requiredValue)) {
-                return new RouteMatchResult.StringResult(pathSegment);
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public String getSegmentName() {
-            return this.paramName;
-        }
-    }
 }
