@@ -42,7 +42,7 @@ public class PathTravelAgentBenchmark extends AbstractBenchmark {
 
         final Random random = new Random();
         for (int i = 0; i < COUNT; i++) {
-            requests.add(i, new TestReq(routePaths[random.nextInt(routePaths.length)]));
+            requests.add(i, new TestReq(routePaths[random.nextInt(routePaths.length)].replaceAll("\\/\\$\\w+", "/123")));
         }
     }
 
