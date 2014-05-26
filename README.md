@@ -153,7 +153,7 @@ new PathTravelAgent<MyReq, MyRes>(routes);
 
 ### Creating a router by combining builder and data structures
 
-// Which is the same as...
+```java
 PathTravelAgent.Builder.<MyReq,MyRes>start()
     .addRoute(new Route<MyReq, MyRes>(myHomeRouteSegments, homePageHandler))
     .addRoute(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler))
