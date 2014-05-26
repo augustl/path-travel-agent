@@ -8,7 +8,9 @@ Made to be embedded by other engines that wants fast and type-safe request/respo
 
 ## Installing
 
-Install from maven central. **Note**: current version is not actually present in maven central. It's still a unpublished snapshot release.
+Install from maven central.
+
+**Note**: current version is not actually present in maven central. It's still a unpublished snapshot release.
 
 ```xml
 <dependency>
