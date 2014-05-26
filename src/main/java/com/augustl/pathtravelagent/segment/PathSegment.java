@@ -14,18 +14,4 @@ public class PathSegment implements ISegment {
     public String getSegmentName() {
         return this.pathName;
     }
-
-    @Override
-    public RouteMatchResult.IResult matchPathSegment(String pathSegment) {
-        if (pathSegment.equals(this.pathName)) {
-            return RouteMatchResult.successResult;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean isParametric() {
-        return false;
-    }
 }

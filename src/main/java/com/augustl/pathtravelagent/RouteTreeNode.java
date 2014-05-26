@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IRequest, T_RES> {
     private final HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> namedChildren = new HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>();
-    private final HashMap<String, Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new HashMap<String, Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
+    private final HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
     //    private final List<Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new ArrayList<Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
     private Route<T_REQ, T_RES> route;
 
@@ -36,12 +36,12 @@ public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IR
     public RouteTreeNode<T_ROUTE, T_REQ, T_RES> proceed(ISegment segment) {
         String segmentName = segment.getSegmentName();
 
-        if (segment.isParametric()) {
+        if (segment instanceof ISegmentParametric) {
             if (parametricChildren.containsKey(segmentName)) {
                 return parametricChildren.get(segmentName).b;
             } else {
                 RouteTreeNode<T_ROUTE, T_REQ, T_RES> child = new RouteTreeNode<T_ROUTE, T_REQ, T_RES>();
-                parametricChildren.put(segmentName, new Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>(segment, child));
+                parametricChildren.put(segmentName, new Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>((ISegmentParametric)segment, child));
                 return child;
             }
         } else {
@@ -92,7 +92,7 @@ public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IR
 
     private  RouteTreeNode<T_ROUTE, T_REQ, T_RES> getParametricChildrenMatch(String pathSegment, RouteMatchResult routeMatchResult) {
         for (String key : parametricChildren.keySet()) {
-            Pair<ISegment, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> pair = parametricChildren.get(key);
+            Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> pair = parametricChildren.get(key);
             RouteMatchResult.IResult matchResult = pair.a.matchPathSegment(pathSegment);
             boolean matched = routeMatchResult.addPossibleMatch(pair.a.getSegmentName(), matchResult);
             if (matched) {

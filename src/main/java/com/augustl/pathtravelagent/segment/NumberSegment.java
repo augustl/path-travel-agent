@@ -1,9 +1,9 @@
 package com.augustl.pathtravelagent.segment;
 
-import com.augustl.pathtravelagent.ISegment;
+import com.augustl.pathtravelagent.ISegmentParametric;
 import com.augustl.pathtravelagent.RouteMatchResult;
 
-public class NumberSegment implements ISegment {
+public class NumberSegment implements ISegmentParametric {
     private final String paramName;
 
     public NumberSegment(String paramName) {
@@ -23,10 +23,5 @@ public class NumberSegment implements ISegment {
         } catch (NumberFormatException e) {
             return null;
         }
-    }
-
-    @Override
-    public boolean isParametric() {
-        return true;
     }
 }

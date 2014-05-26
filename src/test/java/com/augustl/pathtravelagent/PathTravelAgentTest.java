@@ -206,7 +206,7 @@ public class PathTravelAgentTest {
         }
     }
 
-    private class TestSegment implements ISegment {
+    private class TestSegment implements ISegmentParametric {
         private final String paramName;
         private final String requiredValue;
         public TestSegment(String paramName, String requiredValue) {
@@ -226,11 +226,6 @@ public class PathTravelAgentTest {
         @Override
         public String getSegmentName() {
             return this.paramName;
-        }
-
-        @Override
-        public boolean isParametric() {
-            return true;
         }
     }
 }
