@@ -20,11 +20,15 @@ Install from maven central. **Note**: current version is not actually present in
 
 ## Usage
 
-The `com.augustl.pathtravelagent.PathTravelAgent` has two generics, the types that represents requests and responses.
+### Generics for type safety
 
 ```java
  PathTravelAgent<MyReq, MyRes> pta;
 ```
+
+An instance of `PathTravelAgent` needs to specify the type of both the request and response objects.
+
+### The request object
 
 `MyReq` has to implement `com.augustl.pathtravelagent.IRequest`.
 
@@ -47,11 +51,11 @@ class MyReq implements IRequest {
 
 
 ```java
+// A bunch of optional fields that you can use for whatever you want in your handlers.
 class MyReq implements IRequest {
     private final String path;
     private final String method;
     private final String accept;
-    // Only getPath() is used by the system - other fields are metadata for yourself.
     public MyReq(String path, String method, String accept) {
         this.path = path;
         this.method = method;
@@ -65,16 +69,18 @@ class MyReq implements IRequest {
 }
 ```
 
-`MyRes` can be anything you want, we don't care. The generic is only there for type safety, and we return your response as-is, without any processing.
+### The response object.
 
 ```java
 class MyRes {
 }
 ```
 
+`MyRes` can be anything you want, we don't care. The generic is only there for type safety, and we return your response as-is, without any processing.
+
 `MyRes` will probably contain information returned from calling business logic in your app, so you will probably have a field called `body` and `status` on it. But this is completely up to you.
 
-There are many ways to create a router. Here's the most flexible one, the builder.
+### Creating a router
 
 ```java
 PathTravelAgent<MyReq, MyRes> pta = PathTravelAgent.Builder.<MyReq,MyRes>start()
@@ -87,9 +93,9 @@ PathTravelAgent<MyReq, MyRes> pta = PathTravelAgent.Builder.<MyReq,MyRes>start()
 MyRes res = pta.match(new MyReq("/projects/1/todos", "GET", "text/html"));
 ```
 
-Again, `PathTravelAgent` only cares about `gePath` on the requst, so the other values passed to the constructor are for your own usage.
+There are many ways to create a router, and the builder is the most flexible one.
 
-Let's look at handler, here's `listTodosHandler`.
+### Creating handlers
 
 ```java
 IRouteHandler<MyReq, MyRes> listTodosHandler = new IRoutesHandler<MyReq, MyRes>() {
@@ -110,21 +116,27 @@ IRouteHandler<MyReq, MyRes> listTodosHandler = new IRoutesHandler<MyReq, MyRes>(
 
 Your handler gets called when the route matches, and you're respondible for doing any additional routing. Here we can see that getRequest on MyReq is called. Do whatever you want here, all we care about is that you return an instance of MyRes or null.
 
-There are convenience methods for building routes. Here are a bunch of equivalents.
+### Creating a router with the builder (as mentioned above)
 
 ```java
 PathTravelAgent.Builder.<MyReq,MyRes>start()
     .newRoute().buildRoute(homePageHandler)
     .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").buildRoute(listTodosHandler)
     .build();
+```
 
-// Which is the same as...
+### Creating a router from strings
+
+```java
 PathTravelAgent.Builder.<MyReq,MyRes>start()
     .newRouteString("/", homePageHandler)
     .newRouteString("/projects/$projectId/todos", listTodosHandler)
     .build();
+```
 
-// Which is the same as...
+### Creating a router from data structures
+
+```java
 List<Route<MyReq, MyRes>> routes = new ArrayList<Route<MyReq, MyRes>();
 
 List<ISegment> myHomeRouteSegments = new ArrayList<ISegment>();
@@ -137,6 +149,9 @@ myTodosRoutesSegments.add(new PathSegment("todos"));
 routes.add(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler));
 
 new PathTravelAgent<MyReq, MyRes>(routes);
+```
+
+### Creating a router by combining builder and data structures
 
 // Which is the same as...
 PathTravelAgent.Builder.<MyReq,MyRes>start()
@@ -144,10 +159,6 @@ PathTravelAgent.Builder.<MyReq,MyRes>start()
     .addRoute(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler))
     .build();
 ```
-
-You can use the manual list building API as well as the builder (just `segment` instead of `pathSegment` etc) to add any segment you want, as long as it implements ISegment. This allows custom parsing and handling of path segment.
-
-And that's it! Have fun!
 
 ## License
 
