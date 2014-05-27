@@ -84,7 +84,7 @@ public class PathTravelAgentTest {
             .newRouteString("/projects/$projectId", new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
-                    return new TestRes("Hello " + match.getIntegerRouteMatchResult("projectId"));
+                    return new TestRes("Hello " + match.getStringRouteMatchResult("projectId"));
                 }
             })
             .build();
@@ -92,6 +92,7 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/")).getBody(), "hello, root");
         assertEquals(pta.match(new TestReq("/foo")).getBody(), "hello, foo");
         assertEquals(pta.match(new TestReq("/projects/1")).getBody(), "Hello 1");
+        assertEquals(pta.match(new TestReq("/projects/hello_world")).getBody(), "Hello hello_world");
     }
 
     @Test
@@ -211,5 +212,19 @@ public class PathTravelAgentTest {
 
         assertEquals(pta.match(new TestReq("/foo/123")).getBody(), "hello, wildcard");
         assertEquals(pta.match(new TestReq("/foo/bar")).getBody(), "hello, bar");
+    }
+
+    @Test
+    public void parametricSegmentAtRoot() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().numberSegment("projectId").buildRoute(new IRouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("hello " + match.getIntegerRouteMatchResult("projectId"));
+                }
+            })
+            .build();
+
+        assertEquals(pta.match(new TestReq("/666")).getBody(), "hello 666");
     }
 }

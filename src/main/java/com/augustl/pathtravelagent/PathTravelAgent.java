@@ -57,6 +57,12 @@ public class PathTravelAgent<T_REQ extends IRequest, T_RES> {
             return this;
         }
 
+        public Builder<TT_REQ, TT_RES> arbitraryParamSegment(String paramName) {
+            this.ensureIsBuildingRoute();
+            this.currentRouteBuilder = this.currentRouteBuilder.arbitraryParamSegment(paramName);
+            return this;
+        }
+
         public Builder<TT_REQ, TT_RES> segment(ISegment segment) {
             this.ensureIsBuildingRoute();
             this.currentRouteBuilder = this.currentRouteBuilder.genericSegment(segment);

@@ -21,7 +21,7 @@ public class RouteStringBuilder<T_REQ extends IRequest, T_RES> {
         String[] pathSegments = unparsedPath.split("/");
         for (String pathSegment : pathSegments) {
             if (pathSegment.startsWith(this.paramIndicator)) {
-                routeBuilder = routeBuilder.numberSegment(pathSegment.substring(this.paramIndicator.length()));
+                routeBuilder = routeBuilder.arbitraryParamSegment(pathSegment.substring(this.paramIndicator.length()));
             } else if (pathSegment.startsWith("*")) {
                 if (pathSegment.length() == 1) {
                     routeBuilder = routeBuilder.wildcardSegment(null);

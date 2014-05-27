@@ -1,5 +1,6 @@
 package com.augustl.pathtravelagent;
 
+import com.augustl.pathtravelagent.segment.ArbitraryParamSegment;
 import com.augustl.pathtravelagent.segment.NumberSegment;
 import com.augustl.pathtravelagent.segment.PathSegment;
 import com.augustl.pathtravelagent.segment.WildcardSegment;
@@ -24,6 +25,10 @@ public class RouteBuilder<T_REQ extends IRequest, T_RES> {
         return this;
     }
 
+    public RouteBuilder<T_REQ, T_RES> arbitraryParamSegment(String paramName) {
+        segments.add(new ArbitraryParamSegment(paramName));
+        return this;
+    }
 
     public RouteBuilder<T_REQ, T_RES> genericSegment(ISegment segment) {
         segments.add(segment);
