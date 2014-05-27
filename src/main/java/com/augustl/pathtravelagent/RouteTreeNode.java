@@ -1,6 +1,7 @@
 package com.augustl.pathtravelagent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,6 +9,8 @@ public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IR
     private final HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> namedChildren = new HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>();
     private final HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
     private Route<T_REQ, T_RES> route;
+    private static final List<String> EMPTY_PATH_SEGMENTS = new ArrayList<String>();
+
 
     private class Pair<A, B> {
         private final A a;
@@ -66,7 +69,15 @@ public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IR
         return this.route != null;
     }
 
-    public T_RES match(T_REQ req, List<String> pathSegments) {
+    public T_RES match(T_REQ req) {
+        List<String> pathSegments;
+        String[] pathSegmentsAry = req.getPath().split("/");
+        if (pathSegmentsAry.length == 0) {
+            pathSegments = EMPTY_PATH_SEGMENTS;
+        } else {
+            pathSegments = Arrays.asList(pathSegmentsAry).subList(1, pathSegmentsAry.length);
+        }
+
         RouteMatchResult routeMatchResult = new RouteMatchResult();
 
         RouteTreeNode<T_ROUTE, T_REQ, T_RES> deepNode = this;
