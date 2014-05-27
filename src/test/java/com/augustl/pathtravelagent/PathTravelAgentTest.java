@@ -217,14 +217,16 @@ public class PathTravelAgentTest {
     @Test
     public void parametricSegmentAtRoot() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
-            .newRoute().numberSegment("projectId").buildRoute(new IRouteHandler<TestReq, TestRes>() {
+            .newRoute().pathSegment("test").buildRoute(new TestHandler("hello, test"))
+            .newRoute().arbitraryParamSegment("projectId").buildRoute(new IRouteHandler<TestReq, TestRes>() {
                 @Override
                 public TestRes call(RouteMatch<TestReq> match) {
-                    return new TestRes("hello " + match.getIntegerRouteMatchResult("projectId"));
+                    return new TestRes("hello, parametric " + match.getStringRouteMatchResult("projectId"));
                 }
             })
             .build();
 
-        assertEquals(pta.match(new TestReq("/666")).getBody(), "hello 666");
+        assertEquals(pta.match(new TestReq("/666")).getBody(), "hello, parametric 666");
+        assertEquals(pta.match(new TestReq("/test")).getBody(), "hello, test");
     }
 }
