@@ -174,4 +174,33 @@ public class PathTravelAgentTest {
         assertEquals(pta.match(new TestReq("/foo")).getBody(), "foo");
     }
 
+    @Test
+    public void wildcardMatches() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRouteString("/foo/*", new TestHandler("hello, string wildcard"))
+            .newRouteString("/bar/*baz", new IRouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("hello, string named wildcard " + match.getStringRouteMatchResult("baz"));
+                }
+            })
+            .newRoute().pathSegment("baz").wildcardSegment(null).buildRoute(new TestHandler("hello, wildcard"))
+            .newRoute().pathSegment("maz").wildcardSegment("myName").buildRoute(new IRouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("hello, named wildcard " + match.getStringRouteMatchResult("myName"));
+                }
+            })
+            .build();
+
+        assertNull(pta.match(new TestReq("/foo")));
+        assertEquals(pta.match(new TestReq("/foo/123")).getBody(), "hello, string wildcard");
+        assertEquals(pta.match(new TestReq("/bar/123")).getBody(), "hello, string named wildcard 123");
+        assertEquals(pta.match(new TestReq("/bar/wat_wut")).getBody(), "hello, string named wildcard wat_wut");
+        assertNull(pta.match(new TestReq("/baz")));
+        assertEquals(pta.match(new TestReq("/baz/123abc")).getBody(), "hello, wildcard");
+        assertEquals(pta.match(new TestReq("/maz/123abc")).getBody(), "hello, named wildcard 123abc");
+
+
+    }
 }

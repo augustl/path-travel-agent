@@ -2,6 +2,7 @@ package com.augustl.pathtravelagent;
 
 import com.augustl.pathtravelagent.segment.NumberSegment;
 import com.augustl.pathtravelagent.segment.PathSegment;
+import com.augustl.pathtravelagent.segment.WildcardSegment;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,12 @@ public class RouteBuilder<T_REQ extends IRequest, T_RES> {
         segments.add(new NumberSegment(paramName));
         return this;
     }
+
+    public RouteBuilder<T_REQ, T_RES> wildcardSegment(String paramName) {
+        segments.add(new WildcardSegment(paramName));
+        return this;
+    }
+
 
     public RouteBuilder<T_REQ, T_RES> genericSegment(ISegment segment) {
         segments.add(segment);
