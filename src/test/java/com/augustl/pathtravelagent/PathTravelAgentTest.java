@@ -200,7 +200,16 @@ public class PathTravelAgentTest {
         assertNull(pta.match(new TestReq("/baz")));
         assertEquals(pta.match(new TestReq("/baz/123abc")).getBody(), "hello, wildcard");
         assertEquals(pta.match(new TestReq("/maz/123abc")).getBody(), "hello, named wildcard 123abc");
+    }
 
+    @Test
+    public void mixingWildcardWithPlainPaths() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().pathSegment("foo").wildcardSegment(null).buildRoute(new TestHandler("hello, wildcard"))
+            .newRoute().pathSegment("foo").pathSegment("bar").buildRoute(new TestHandler("hello, bar"))
+            .build();
 
+        assertEquals(pta.match(new TestReq("/foo/123")).getBody(), "hello, wildcard");
+        assertEquals(pta.match(new TestReq("/foo/bar")).getBody(), "hello, bar");
     }
 }
