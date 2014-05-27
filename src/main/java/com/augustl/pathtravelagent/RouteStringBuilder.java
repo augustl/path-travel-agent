@@ -1,6 +1,12 @@
 package com.augustl.pathtravelagent;
 
 public class RouteStringBuilder<T_REQ extends IRequest, T_RES> {
+    private final String paramIndicator;
+
+    public RouteStringBuilder(String paramIndicator) {
+        this.paramIndicator = paramIndicator;
+    }
+
     public Route<T_REQ, T_RES> build(String unparsedPath, IRouteHandler<T_REQ, T_RES> handler) {
         RouteBuilder<T_REQ, T_RES> routeBuilder = new RouteBuilder<T_REQ, T_RES>();
 
@@ -14,8 +20,8 @@ public class RouteStringBuilder<T_REQ extends IRequest, T_RES> {
 
         String[] pathSegments = unparsedPath.split("/");
         for (String pathSegment : pathSegments) {
-            if (pathSegment.startsWith("$")) {
-                routeBuilder = routeBuilder.numberSegment(pathSegment.substring(1));
+            if (pathSegment.startsWith(this.paramIndicator)) {
+                routeBuilder = routeBuilder.numberSegment(pathSegment.substring(this.paramIndicator.length()));
             } else {
                 routeBuilder = routeBuilder.pathSegment(pathSegment);
             }
