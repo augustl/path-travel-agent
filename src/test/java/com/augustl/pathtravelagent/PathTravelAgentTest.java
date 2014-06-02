@@ -233,7 +233,7 @@ public class PathTravelAgentTest {
     }
 
     @Test
-    public void oddInput() {
+    public void randomizedOddInput() {
         PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
             .newRoute().buildRoute(new TestHandler("hello, root"))
             .newRoute().pathSegment("projects").buildRoute(new TestHandler("hello, projects"))
@@ -254,5 +254,39 @@ public class PathTravelAgentTest {
 
             pta.match(new TestReq(url));
         }
+    }
+
+    @Test
+    public void oddInput() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().buildRoute(new TestHandler("hello, root"))
+            .newRoute().pathSegment("test").buildRoute(new TestHandler("hello, test"))
+            .newRoute().pathSegment("test").arbitraryParamSegment("id").buildRoute(new IRouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("hello, param " + match.getStringRouteMatchResult("id"));
+                }
+            })
+            .newRoute().arbitraryParamSegment("userShortname").buildRoute(new IRouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("hello, user " + match.getStringRouteMatchResult("userShortname"));
+                }
+            })
+            .build();
+
+        assertEquals(pta.match(new TestReq("/")).getBody(), "hello, root");
+        assertEquals(pta.match(new TestReq("//")).getBody(), "hello, root");
+        assertEquals(pta.match(new TestReq("/test")).getBody(), "hello, test");
+        assertEquals(pta.match(new TestReq("/test/")).getBody(), "hello, test");
+        assertEquals(pta.match(new TestReq("/test//")).getBody(), "hello, test");
+        assertEquals(pta.match(new TestReq("/test/wat")).getBody(), "hello, param wat");
+        assertEquals(pta.match(new TestReq("/test/wat/")).getBody(), "hello, param wat");
+        assertEquals(pta.match(new TestReq("/test/wat//")).getBody(), "hello, param wat");
+        assertEquals(pta.match(new TestReq("/hmmm")).getBody(), "hello, user hmmm");
+        assertEquals(pta.match(new TestReq("/hmmm/")).getBody(), "hello, user hmmm");
+        assertEquals(pta.match(new TestReq("/hmmm///")).getBody(), "hello, user hmmm");
+
+
     }
 }
