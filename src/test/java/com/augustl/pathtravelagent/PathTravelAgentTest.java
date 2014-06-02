@@ -2,6 +2,8 @@ package com.augustl.pathtravelagent;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 public class PathTravelAgentTest {
@@ -228,5 +230,29 @@ public class PathTravelAgentTest {
 
         assertEquals(pta.match(new TestReq("/666")).getBody(), "hello, parametric 666");
         assertEquals(pta.match(new TestReq("/test")).getBody(), "hello, test");
+    }
+
+    @Test
+    public void oddInput() {
+        PathTravelAgent<TestReq, TestRes> pta = PathTravelAgent.Builder.<TestReq, TestRes>start()
+            .newRoute().buildRoute(new TestHandler("hello, root"))
+            .newRoute().pathSegment("projects").buildRoute(new TestHandler("hello, projects"))
+            .newRoute().pathSegment("projects").arbitraryParamSegment("projectId").buildRoute(new TestHandler("hello, specific project"))
+            .newRoute().arbitraryParamSegment("userShortname").buildRoute(new TestHandler("hello, user page"))
+            .build();
+
+        String[] symbols = {"/", "/", "/", "/", "/",
+            "$", "\\", "?",
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"};
+
+        Random rand = new Random();
+        for (int i = 0; i < 10000; i++) {
+            String url = "/";
+            for (int j = 0; j < rand.nextInt(100); j++) {
+                url = url + symbols[rand.nextInt(symbols.length)];
+            }
+
+            pta.match(new TestReq(url));
+        }
     }
 }
