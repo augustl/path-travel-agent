@@ -20,6 +20,8 @@ Install from maven central.
 </dependency>
 ```
 
+# Note: The following docs are severely out of date! API rewrite is in progress. See the tests.
+
 ## Usage
 
 ### Generics for type safety

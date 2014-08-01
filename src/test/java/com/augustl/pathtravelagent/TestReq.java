@@ -1,5 +1,7 @@
 package com.augustl.pathtravelagent;
 
+import java.util.List;
+
 class TestReq implements IRequest {
     private final String path;
     private final Object extras;
@@ -18,9 +20,8 @@ class TestReq implements IRequest {
         return this.extras;
     }
 
-
     @Override
-    public String getPath() {
-        return this.path;
+    public List<String> getPathSegments() {
+        return DefaultPathToPathSegments.parse(this.path);
     }
 }

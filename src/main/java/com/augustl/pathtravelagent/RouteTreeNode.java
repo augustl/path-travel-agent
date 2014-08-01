@@ -1,117 +1,87 @@
 package com.augustl.pathtravelagent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.augustl.pathtravelagent.segment.IParametricSegment;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class RouteTreeNode<T_ROUTE extends Route<T_REQ, T_RES>, T_REQ extends IRequest, T_RES> {
-    private final HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> namedChildren = new HashMap<String, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>();
-    private final HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>> parametricChildren = new HashMap<String, Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>>();
-    private Route<T_REQ, T_RES> route;
-    private static final List<String> EMPTY_PATH_SEGMENTS = new ArrayList<String>();
-
-
-    private class Pair<A, B> {
-        private final A a;
-        private final B b;
-        public Pair(A a, B b) {
-            this.a = a;
-            this.b = b;
-        }
-        public A getA() { return this.a; }
-        public B getB() { return this.b; }
-    }
-
-    public void addRoute(Route<T_REQ, T_RES> route) {
-        RouteTreeNode<T_ROUTE, T_REQ, T_RES> deepNode = this;
-        for (ISegment segment : route.getSegments()) {
-            deepNode = deepNode.proceed(segment);
-        }
-
-        if (deepNode.hasRoute()) {
-            throw new IllegalStateException("There is already a route for " + route.getSegments());
-        }
-        deepNode.setRoute(route);
-    }
-
-    public RouteTreeNode<T_ROUTE, T_REQ, T_RES> proceed(ISegment segment) {
-        String segmentName = segment.getSegmentName();
-
-        if (segment instanceof ISegmentParametric) {
-            if (parametricChildren.containsKey(segmentName)) {
-                return parametricChildren.get(segmentName).b;
-            } else {
-                RouteTreeNode<T_ROUTE, T_REQ, T_RES> child = new RouteTreeNode<T_ROUTE, T_REQ, T_RES>();
-                parametricChildren.put(segmentName, new Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>>((ISegmentParametric)segment, child));
-                return child;
-            }
-        } else {
-            if (namedChildren.containsKey(segmentName)) {
-                return namedChildren.get(segmentName);
-            } else {
-                RouteTreeNode<T_ROUTE, T_REQ, T_RES> child = new RouteTreeNode<T_ROUTE, T_REQ, T_RES>();
-                namedChildren.put(segmentName, child);
-                return child;
-            }
-        }
-    }
-
-    private void setRoute(Route<T_REQ, T_RES> route) {
-        this.route = route;
-    }
-
-    private Route<T_REQ, T_RES> getRoute() {
-        return this.route;
-    }
-
-    private boolean hasRoute() {
-        return this.route != null;
-    }
+public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
+    private final Pattern validSegmentChars = Pattern.compile("[\\w\\-\\._~]+");
+    private IRouteHandler<T_REQ, T_RES> handler;
+    private HashMap<String, RouteTreeNode<T_REQ, T_RES>> pathSegmentChildNodes = new HashMap<String, RouteTreeNode<T_REQ, T_RES>>();
+    private ParametricChild parametricChild;
 
     public T_RES match(T_REQ req) {
-        List<String> pathSegments;
-        String[] pathSegmentsAry = req.getPath().split("/");
-        if (pathSegmentsAry.length == 0) {
-            pathSegments = EMPTY_PATH_SEGMENTS;
-        } else {
-            pathSegments = Arrays.asList(pathSegmentsAry).subList(1, pathSegmentsAry.length);
-        }
-
+        List<String> pathSegments = req.getPathSegments();
+        RouteTreeNode<T_REQ, T_RES> targetNode = this;
         RouteMatchResult routeMatchResult = new RouteMatchResult();
 
-        RouteTreeNode<T_ROUTE, T_REQ, T_RES> deepNode = this;
         for (String pathSegment : pathSegments) {
-            if (deepNode.namedChildren.containsKey(pathSegment)) {
-                deepNode = deepNode.namedChildren.get(pathSegment);
-            } else {
-                deepNode = deepNode.getParametricChildrenMatch(pathSegment, routeMatchResult);
+            if (targetNode.pathSegmentChildNodes.containsKey(pathSegment)) {
+                targetNode = targetNode.pathSegmentChildNodes.get(pathSegment);
+                continue;
             }
-            if (deepNode == null) {
-                return null;
-            }
-        }
 
-        Route<T_REQ, T_RES> route = deepNode.getRoute();
-        if (route == null) {
+            if (targetNode.parametricChild != null) {
+                if (targetNode.parametricChild.resolver != null) {
+                    // TODO: Actually resolve
+                    targetNode.parametricChild.resolver.toString();
+                }
+
+                if (!routeMatchResult.addParametricSegment(targetNode.parametricChild.parametricSegment, pathSegment)) {
+                    return null;
+                }
+                targetNode = targetNode.parametricChild.childNode;
+                continue;
+            }
+
             return null;
         }
 
-        return route.match(req, routeMatchResult);
-    }
-
-    private  RouteTreeNode<T_ROUTE, T_REQ, T_RES> getParametricChildrenMatch(String pathSegment, RouteMatchResult routeMatchResult) {
-        for (String key : parametricChildren.keySet()) {
-            Pair<ISegmentParametric, RouteTreeNode<T_ROUTE, T_REQ, T_RES>> pair = parametricChildren.get(key);
-            RouteMatchResult.IResult matchResult = pair.a.matchPathSegment(pathSegment);
-            boolean matched = routeMatchResult.addPossibleMatch(pair.a.getSegmentName(), matchResult);
-            if (matched) {
-                return pair.b;
-            } else {
-                return null;
-            }
+        if (targetNode == null) {
+            return null;
         }
 
-        return null;
+        if (targetNode.handler == null) {
+            return null;
+        }
+
+        return targetNode.handler.call(new RouteMatch<T_REQ>(req, routeMatchResult));
+    }
+
+    public void setHandler(IRouteHandler<T_REQ, T_RES> handler) {
+        this.handler = handler;
+    }
+
+    public void addPathSegmentChild(String pathSegment, RouteTreeNode<T_REQ, T_RES> childNode) {
+        ensureContainsValidSegmentChars(pathSegment);
+        pathSegmentChildNodes.put(pathSegment, childNode);
+    }
+
+    public synchronized void setParametricChild(IParametricSegment parametricSegment, RouteTreeNode<T_REQ, T_RES> childNode) {
+        if (parametricChild != null) {
+            throw new IllegalStateException("Cannot assign parametric child, already has one");
+        }
+        parametricChild = new ParametricChild(parametricSegment, childNode);
+    }
+
+    private void ensureContainsValidSegmentChars(String str) {
+        Matcher matcher = validSegmentChars.matcher(str);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Param " + str + " contains invalid characters");
+        }
+    }
+
+    private class ParametricChild {
+        private final IParametricSegment parametricSegment;
+        private final RouteTreeNode<T_REQ, T_RES> childNode;
+        private final Object resolver;
+        public ParametricChild(IParametricSegment parametricSegment, RouteTreeNode<T_REQ, T_RES> childNode) {
+            this.parametricSegment = parametricSegment;
+            this.childNode = childNode;
+            this.resolver = null;
+        }
     }
 }

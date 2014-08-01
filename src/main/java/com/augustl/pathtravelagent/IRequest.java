@@ -1,5 +1,7 @@
 package com.augustl.pathtravelagent;
 
+import java.util.List;
+
 public interface IRequest {
-    public String getPath();
+    public List<String> getPathSegments();
 }

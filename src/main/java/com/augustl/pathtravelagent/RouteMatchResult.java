@@ -1,19 +1,21 @@
 package com.augustl.pathtravelagent;
 
+import com.augustl.pathtravelagent.segment.IParametricSegment;
+
 import java.util.HashMap;
 
 public class RouteMatchResult {
-    public static SuccessResult successResult = new SuccessResult();
     private final HashMap<String, Integer> integerMatches = new HashMap<String, Integer>();
     private final HashMap<String, String> stringMatches = new HashMap<String, String>();
 
-    public boolean addPossibleMatch(String segmentName, IResult result) {
-        if (result == null) {
+    public boolean addParametricSegment(IParametricSegment parametricSegment, String rawValue) {
+        IResult value = parametricSegment.getValue(rawValue);
+        if (value == null) {
             return false;
         }
 
-        result.addToMatchResult(segmentName, this);
-        return result.isSuccess();
+        value.addToMatchResult(parametricSegment.getParamName(), this);
+        return value.isSuccess();
     }
 
     public void addToIntegerMatches(String pathSegment, Integer val) {
@@ -34,20 +36,20 @@ public class RouteMatchResult {
 
     public static interface IResult {
         public boolean isSuccess();
-        public void addToMatchResult(String segmentName, RouteMatchResult res);
+        public void addToMatchResult(String paramName, RouteMatchResult res);
     }
 
-    private static class SuccessResult implements IResult {
-        @Override
-        public boolean isSuccess() {
-            return true;
-        }
-
-        @Override
-        public void addToMatchResult(String segmentName, RouteMatchResult res) {
-
-        }
-    }
+//    private static class SuccessResult implements IResult {
+//        @Override
+//        public boolean isSuccess() {
+//            return true;
+//        }
+//
+//        @Override
+//        public void addToMatchResult(String paramName, RouteMatchResult res) {
+//
+//        }
+//    }
 
     public static class IntegerResult implements IResult {
         private final Integer val;
@@ -61,8 +63,8 @@ public class RouteMatchResult {
         }
 
         @Override
-        public void addToMatchResult(String segmentName, RouteMatchResult res) {
-            res.addToIntegerMatches(segmentName, this.val);
+        public void addToMatchResult(String paramName, RouteMatchResult res) {
+            res.addToIntegerMatches(paramName, this.val);
         }
     }
 

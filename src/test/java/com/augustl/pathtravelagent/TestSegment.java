@@ -1,6 +1,8 @@
 package com.augustl.pathtravelagent;
 
-class TestSegment implements ISegmentParametric {
+import com.augustl.pathtravelagent.segment.IParametricSegment;
+
+class TestSegment implements IParametricSegment {
     private final String paramName;
     private final String requiredValue;
     public TestSegment(String paramName, String requiredValue) {
@@ -9,16 +11,16 @@ class TestSegment implements ISegmentParametric {
     }
 
     @Override
-    public RouteMatchResult.IResult matchPathSegment(String pathSegment) {
-        if (pathSegment.startsWith(this.requiredValue)) {
-            return new RouteMatchResult.StringResult(pathSegment);
-        } else {
-            return null;
-        }
+    public String getParamName() {
+        return this.paramName;
     }
 
     @Override
-    public String getSegmentName() {
-        return this.paramName;
+    public RouteMatchResult.IResult getValue(String rawValue) {
+        if (rawValue.startsWith(this.requiredValue)) {
+            return new RouteMatchResult.StringResult(rawValue);
+        } else {
+            return null;
+        }
     }
 }
