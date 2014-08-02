@@ -25,11 +25,6 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
             }
 
             if (targetNode.parametricChild != null) {
-                if (targetNode.parametricChild.resolver != null) {
-                    // TODO: Actually resolve
-                    targetNode.parametricChild.resolver.toString();
-                }
-
                 if (!routeMatchResult.addParametricSegment(targetNode.parametricChild.parametricSegment, pathSegment)) {
                     return null;
                 }
@@ -77,11 +72,9 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     private class ParametricChild {
         private final IParametricSegment parametricSegment;
         private final RouteTreeNode<T_REQ, T_RES> childNode;
-        private final Object resolver;
         public ParametricChild(IParametricSegment parametricSegment, RouteTreeNode<T_REQ, T_RES> childNode) {
             this.parametricSegment = parametricSegment;
             this.childNode = childNode;
-            this.resolver = null;
         }
     }
 }
