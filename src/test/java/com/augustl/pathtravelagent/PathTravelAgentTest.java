@@ -14,7 +14,7 @@ public class PathTravelAgentTest {
             .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new TestHandler("Hello, foo!")))
             .build();
-        assertEquals(r.match(new TestReq("/foo")).getBody(), "Hello, foo!");
+        assertEquals(r.match(new TestReq("/foo")), new TestRes("Hello, foo!"));
     }
 
     @Test
@@ -34,8 +34,8 @@ public class PathTravelAgentTest {
                 .handler(new TestHandler("Hello, bar!")))
             .build();
 
-        assertEquals(r.match(new TestReq("/foo")).getBody(), "Hello, foo!");
-        assertEquals(r.match(new TestReq("/bar")).getBody(), "Hello, bar!");
+        assertEquals(r.match(new TestReq("/foo")), new TestRes("Hello, foo!"));
+        assertEquals(r.match(new TestReq("/bar")), new TestRes("Hello, bar!"));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class PathTravelAgentTest {
 
         assertNull(r.match(new TestReq("/foo")));
         assertNull(r.match(new TestReq("/foo/bar")));
-        assertEquals(r.match(new TestReq("/foo/bar/baz")).getBody(), "Hello, foobarbaz!");
+        assertEquals(r.match(new TestReq("/foo/bar/baz")), new TestRes("Hello, foobarbaz!"));
         assertNull(r.match(new TestReq("/foo/bar/baz/maz")));
     }
 
@@ -65,7 +65,7 @@ public class PathTravelAgentTest {
                 }))
             .build();
 
-        assertEquals(r.match(new TestReq("/foo", "to you!")).getBody(), "Hello to you!");
+        assertEquals(r.match(new TestReq("/foo", "to you!")), new TestRes("Hello to you!"));
     }
 
     @Test
@@ -81,8 +81,8 @@ public class PathTravelAgentTest {
                     })))
             .build();
 
-        assertEquals(r.match(new TestReq("/projects/1")).getBody(), "Hello 2");
-        assertEquals(r.match(new TestReq("/projects/1321")).getBody(), "Hello 1322");
+        assertEquals(r.match(new TestReq("/projects/1")), new TestRes("Hello 2"));
+        assertEquals(r.match(new TestReq("/projects/1321")), new TestRes("Hello 1322"));
         assertNull(r.match(new TestReq("/projects/123abc")));
         assertNull(r.match(new TestReq("/projects/123/doesnotexist")));
 
@@ -109,7 +109,7 @@ public class PathTravelAgentTest {
                 }))
             .build();
 
-        assertEquals(r.match(new TestReq("/foo", "yay")).getBody(), "we got yay");
+        assertEquals(r.match(new TestReq("/foo", "yay")), new TestRes("we got yay"));
         assertNull(r.match(new TestReq("/foo", "not yay")));
         assertNull(r.match(new TestReq("/bar", "yay")));
     }
@@ -127,8 +127,8 @@ public class PathTravelAgentTest {
                     })))
             .build();
 
-        assertEquals(r.match(new TestReq("/projects/666")).getBody(), "hello 666");
-        assertEquals(r.match(new TestReq("/projects/666123")).getBody(), "hello 666123");
+        assertEquals(r.match(new TestReq("/projects/666")), new TestRes("hello 666"));
+        assertEquals(r.match(new TestReq("/projects/666123")), new TestRes("hello 666123"));
         assertNull(r.match(new TestReq("/projects/1")));
     }
 
@@ -145,10 +145,10 @@ public class PathTravelAgentTest {
                             .handler(new TestHandler("single todo"))))))
             .build();
 
-        assertEquals(r.match(new TestReq("/projects")).getBody(), "projects list");
-        assertEquals(r.match(new TestReq("/projects/123")).getBody(), "single project");
-        assertEquals(r.match(new TestReq("/projects/123/todos")).getBody(), "todos list");
-        assertEquals(r.match(new TestReq("/projects/123/todos/456")).getBody(), "single todo");
+        assertEquals(r.match(new TestReq("/projects")), new TestRes("projects list"));
+        assertEquals(r.match(new TestReq("/projects/123")), new TestRes("single project"));
+        assertEquals(r.match(new TestReq("/projects/123/todos")), new TestRes("todos list"));
+        assertEquals(r.match(new TestReq("/projects/123/todos/456")), new TestRes("single todo"));
     }
 
     @Test
@@ -168,11 +168,11 @@ public class PathTravelAgentTest {
             .build();
 
         assertNull(r.match(new TestReq("/foo")));
-        assertEquals(r.match(new TestReq("/foo/bar")).getBody(), "bar");
-        assertEquals(r.match(new TestReq("/foo/baz")).getBody(), "baz");
-        assertEquals(r.match(new TestReq("/foo/bar/subbar")).getBody(), "subbar");
-        assertEquals(r.match(new TestReq("/foo/baz/subbaz")).getBody(), "subbaz");
-        assertEquals(r.match(new TestReq("/foo/baz/otherbaz")).getBody(), "otherbaz");
+        assertEquals(r.match(new TestReq("/foo/bar")), new TestRes("bar"));
+        assertEquals(r.match(new TestReq("/foo/baz")), new TestRes("baz"));
+        assertEquals(r.match(new TestReq("/foo/bar/subbar")), new TestRes("subbar"));
+        assertEquals(r.match(new TestReq("/foo/baz/subbaz")), new TestRes("subbaz"));
+        assertEquals(r.match(new TestReq("/foo/baz/otherbaz")), new TestRes("otherbaz"));
     }
 
     @Test
@@ -183,8 +183,8 @@ public class PathTravelAgentTest {
                 .handler(new TestHandler("foo")))
             .build();
 
-        assertEquals(r.match(new TestReq("/")).getBody(), "root");
-        assertEquals(r.match(new TestReq("/foo")).getBody(), "foo");
+        assertEquals(r.match(new TestReq("/")), new TestRes("root"));
+        assertEquals(r.match(new TestReq("/foo")), new TestRes("foo"));
     }
 
     @Test
@@ -202,8 +202,8 @@ public class PathTravelAgentTest {
                 }))
             .build();
 
-        assertEquals(r.match(new TestReq("/666")).getBody(), "hello, parametric 666");
-        assertEquals(r.match(new TestReq("/test")).getBody(), "hello, test");
+        assertEquals(r.match(new TestReq("/666")), new TestRes("hello, parametric 666"));
+        assertEquals(r.match(new TestReq("/test")), new TestRes("hello, test"));
     }
 
     @Test
@@ -255,17 +255,17 @@ public class PathTravelAgentTest {
                 }))
             .build();
 
-        assertEquals(r.match(new TestReq("/")).getBody(), "hello, root");
-        assertEquals(r.match(new TestReq("//")).getBody(), "hello, root");
-        assertEquals(r.match(new TestReq("/test")).getBody(), "hello, test");
-        assertEquals(r.match(new TestReq("/test/")).getBody(), "hello, test");
-        assertEquals(r.match(new TestReq("/test//")).getBody(), "hello, test");
-        assertEquals(r.match(new TestReq("/test/wat")).getBody(), "hello, param wat");
-        assertEquals(r.match(new TestReq("/test/wat/")).getBody(), "hello, param wat");
-        assertEquals(r.match(new TestReq("/test/wat//")).getBody(), "hello, param wat");
-        assertEquals(r.match(new TestReq("/hmmm")).getBody(), "hello, user hmmm");
-        assertEquals(r.match(new TestReq("/hmmm/")).getBody(), "hello, user hmmm");
-        assertEquals(r.match(new TestReq("/hmmm///")).getBody(), "hello, user hmmm");
+        assertEquals(r.match(new TestReq("/")), new TestRes("hello, root"));
+        assertEquals(r.match(new TestReq("//")), new TestRes("hello, root"));
+        assertEquals(r.match(new TestReq("/test")), new TestRes("hello, test"));
+        assertEquals(r.match(new TestReq("/test/")), new TestRes("hello, test"));
+        assertEquals(r.match(new TestReq("/test//")), new TestRes("hello, test"));
+        assertEquals(r.match(new TestReq("/test/wat")), new TestRes("hello, param wat"));
+        assertEquals(r.match(new TestReq("/test/wat/")), new TestRes("hello, param wat"));
+        assertEquals(r.match(new TestReq("/test/wat//")), new TestRes("hello, param wat"));
+        assertEquals(r.match(new TestReq("/hmmm")), new TestRes("hello, user hmmm"));
+        assertEquals(r.match(new TestReq("/hmmm/")), new TestRes("hello, user hmmm"));
+        assertEquals(r.match(new TestReq("/hmmm///")), new TestRes("hello, user hmmm"));
 
 
     }
