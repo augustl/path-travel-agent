@@ -293,4 +293,32 @@ public class PathTravelAgentTest {
         assertEquals(new TestRes("Hello, foo!"), r.match(new TestReq("/foo")));
         assertNull(r.match(new TestReq("/bar")));
     }
+
+    @Test
+    public void testWildcard() {
+        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/pictures", new RouteTreeBuilder<TestReq, TestRes>()
+                .handler(new TestHandler("Hello, pictures"))
+                .wildcard("*path", new RouteTreeBuilder<TestReq, TestRes>()
+                    .handler(new IRouteHandler<TestReq, TestRes>() {
+                        @Override
+                        public TestRes call(RouteMatch<TestReq> match) {
+                            return new TestRes("Folder " + match.getWildcardRouteMatchResult());
+                        }
+                    })))
+            .wildcard("*anythingGoes", new RouteTreeBuilder<TestReq, TestRes>()
+                .handler(new IRouteHandler<TestReq, TestRes>() {
+                    @Override
+                    public TestRes call(RouteMatch<TestReq> match) {
+                        return new TestRes("Here goes " + match.getWildcardRouteMatchResult());
+                    }
+                }))
+            .build();
+
+        assertEquals(new TestRes("Hello, pictures"), r.match(new TestReq("/pictures")));
+        assertEquals(new TestRes("Folder [foo]"), r.match(new TestReq("/pictures/foo")));
+        assertEquals(new TestRes("Folder [foo, test, 123]"), r.match(new TestReq("/pictures/foo/test/123")));
+        assertEquals(new TestRes("Here goes [foo]"), r.match(new TestReq("/foo")));
+        assertEquals(new TestRes("Here goes [foo, bar, baz]"), r.match(new TestReq("/foo/bar/baz")));
+    }
 }

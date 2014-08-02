@@ -2,11 +2,14 @@ package com.augustl.pathtravelagent;
 
 import com.augustl.pathtravelagent.segment.IParametricSegment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RouteMatchResult {
     private final HashMap<String, Integer> integerMatches = new HashMap<String, Integer>();
     private final HashMap<String, String> stringMatches = new HashMap<String, String>();
+    private final ArrayList<String> wildcardMatches = new ArrayList<String>();
 
     public boolean addParametricSegment(IParametricSegment parametricSegment, String rawValue) {
         IResult value = parametricSegment.getValue(rawValue);
@@ -32,6 +35,14 @@ public class RouteMatchResult {
 
     public String getStringMatch(String pathSegment) {
         return this.stringMatches.get(pathSegment);
+    }
+
+    public void addToWildcardMatches(String pathSegment) {
+        this.wildcardMatches.add(pathSegment);
+    }
+
+    public List<String> getWildcardMatches() {
+        return this.wildcardMatches;
     }
 
     public static interface IResult {

@@ -1,5 +1,7 @@
 package com.augustl.pathtravelagent;
 
+import java.util.List;
+
 public class RouteMatch<T_REQ extends IRequest> {
     private final T_REQ req;
     private final RouteMatchResult routeMatchResult;
@@ -19,5 +21,9 @@ public class RouteMatch<T_REQ extends IRequest> {
 
     public String getStringRouteMatchResult(String paramName) {
         return this.routeMatchResult.getStringMatch(paramName);
+    }
+
+    public List<String> getWildcardRouteMatchResult() {
+        return this.routeMatchResult.getWildcardMatches();
     }
 }
