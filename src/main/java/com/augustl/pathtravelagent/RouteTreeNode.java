@@ -15,49 +15,36 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     private ParametricChild parametricChild;
     private WildcardChild wildcardChild;
 
-    public T_RES match(T_REQ req) {
-        List<String> pathSegments = req.getPathSegments();
-        RouteTreeNode<T_REQ, T_RES> targetNode = this;
-        RouteMatchResult routeMatchResult = new RouteMatchResult();
+    public boolean containsPathSegmentChildNodes(String pathSegment) {
+        return this.pathSegmentChildNodes.containsKey(pathSegment);
+    }
 
-        int i;
-        for (i = 0; i < pathSegments.size(); i++) {
-            String pathSegment = pathSegments.get(i);
+    public RouteTreeNode<T_REQ, T_RES> getPathSegmentChildNode(String pathSegment) {
+        return this.pathSegmentChildNodes.get(pathSegment);
+    }
 
-            if (targetNode.pathSegmentChildNodes.containsKey(pathSegment)) {
-                targetNode = targetNode.pathSegmentChildNodes.get(pathSegment);
-                continue;
-            }
+    public boolean hasParametricChild() {
+        return this.parametricChild != null;
+    }
 
-            if (targetNode.parametricChild != null) {
-                if (!routeMatchResult.addParametricSegment(targetNode.parametricChild.parametricSegment, pathSegment)) {
-                    return null;
-                }
-                targetNode = targetNode.parametricChild.childNode;
-                continue;
-            }
+    public IParametricSegment getParametricChildSegment() {
+        return this.parametricChild.parametricSegment;
+    }
 
-            if (targetNode.wildcardChild != null) {
-                for (; i < pathSegments.size(); i++) {
-                    pathSegment = pathSegments.get(i);
-                    routeMatchResult.addToWildcardMatches(pathSegment);
-                }
-                targetNode = targetNode.wildcardChild.childNode;
-                break;
-            }
+    public RouteTreeNode<T_REQ, T_RES> getParametricChildNode() {
+        return this.parametricChild.childNode;
+    }
 
-            return null;
-        }
+    public boolean hasWildcardChild() {
+        return this.wildcardChild != null;
+    }
 
-        if (targetNode == null) {
-            return null;
-        }
+    public RouteTreeNode<T_REQ, T_RES> getWildcardChildNode() {
+        return this.wildcardChild.childNode;
+    }
 
-        if (targetNode.handler == null) {
-            return null;
-        }
-
-        return targetNode.handler.call(new RouteMatch<T_REQ>(req, routeMatchResult));
+    public IRouteHandler<T_REQ, T_RES> getHandler() {
+        return handler;
     }
 
     public void setHandler(IRouteHandler<T_REQ, T_RES> handler) {
