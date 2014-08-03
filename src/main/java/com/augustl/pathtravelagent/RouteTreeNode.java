@@ -13,7 +13,7 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     private IRouteHandler<T_REQ, T_RES> handler;
     private HashMap<String, RouteTreeNode<T_REQ, T_RES>> pathSegmentChildNodes = new HashMap<String, RouteTreeNode<T_REQ, T_RES>>();
     private ParametricChild parametricChild;
-    private WildcardChild wildcardChild;
+    private RouteTreeNode<T_REQ, T_RES> wildcardChild;
 
     public boolean containsPathSegmentChildNodes(String pathSegment) {
         return this.pathSegmentChildNodes.containsKey(pathSegment);
@@ -40,7 +40,7 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     }
 
     public RouteTreeNode<T_REQ, T_RES> getWildcardChildNode() {
-        return this.wildcardChild.childNode;
+        return this.wildcardChild;
     }
 
     public IRouteHandler<T_REQ, T_RES> getHandler() {
@@ -63,12 +63,13 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         parametricChild = new ParametricChild(parametricSegment, childNode);
     }
 
-    public synchronized  void setWildcardChild(String paramName, RouteTreeNode<T_REQ, T_RES> childNode) {
+    public synchronized  void setWildcardChild(RouteTreeNode<T_REQ, T_RES> childNode) {
+
         if (wildcardChild != null) {
             throw new IllegalStateException("Cannot assign wildcard child, already has one");
         }
 
-        wildcardChild = new WildcardChild(paramName, childNode);
+        wildcardChild = childNode;
     }
 
     private void ensureContainsValidSegmentChars(String str) {
@@ -83,16 +84,6 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         private final RouteTreeNode<T_REQ, T_RES> childNode;
         public ParametricChild(IParametricSegment parametricSegment, RouteTreeNode<T_REQ, T_RES> childNode) {
             this.parametricSegment = parametricSegment;
-            this.childNode = childNode;
-        }
-    }
-
-    private class WildcardChild {
-        private final String paramName;
-        private final RouteTreeNode<T_REQ, T_RES> childNode;
-
-        public WildcardChild(String paramName, RouteTreeNode<T_REQ, T_RES> childNode) {
-            this.paramName = paramName;
             this.childNode = childNode;
         }
     }

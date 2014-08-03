@@ -6,7 +6,6 @@ import com.augustl.pathtravelagent.segment.StringSegment;
 public class RouteTreeBuilder<T_REQ extends IRequest, T_RES> {
     private final String pathPrefix = "/";
     private final String paramNamePrefix = "/:";
-    private final String wildcardPrefix = "*";
     private RouteTreeNode<T_REQ, T_RES> node = new RouteTreeNode<T_REQ, T_RES>();
 
     public RouteTreeBuilder<T_REQ, T_RES> handler(IRouteHandler<T_REQ, T_RES> handler) {
@@ -31,9 +30,8 @@ public class RouteTreeBuilder<T_REQ extends IRequest, T_RES> {
         return this;
     }
 
-    public RouteTreeBuilder<T_REQ, T_RES> wildcard(String paramName, final RouteTreeBuilder<T_REQ, T_RES> childBuilder) {
-        String normalizedParamName = paramName.startsWith(wildcardPrefix) ? paramName.substring(wildcardPrefix.length()) : paramName;
-        node.setWildcardChild(normalizedParamName, childBuilder.build());
+    public RouteTreeBuilder<T_REQ, T_RES> wildcard(final RouteTreeBuilder<T_REQ, T_RES> childBuilder) {
+        node.setWildcardChild(childBuilder.build());
         return this;
     }
 

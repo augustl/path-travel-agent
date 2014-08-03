@@ -300,14 +300,14 @@ public class PathTravelAgentTest {
         RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
             .path("/pictures", new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new TestHandler("Hello, pictures"))
-                .wildcard("*path", new RouteTreeBuilder<TestReq, TestRes>()
+                .wildcard(new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("Folder " + match.getWildcardRouteMatchResult());
                         }
                     })))
-            .wildcard("*anythingGoes", new RouteTreeBuilder<TestReq, TestRes>()
+            .wildcard(new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
                     public TestRes call(RouteMatch<TestReq> match) {
