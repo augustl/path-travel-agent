@@ -7,16 +7,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
+    private final String label;
     private final IRouteHandler<T_REQ, T_RES> handler;
     private final HashMap<String, RouteTreeNode<T_REQ, T_RES>> pathSegmentChildNodes;
     private final ParametricChild<T_REQ, T_RES> parametricChild;
     private final RouteTreeNode<T_REQ, T_RES> wildcardChild;
 
     public RouteTreeNode(
+        String label,
         IRouteHandler<T_REQ, T_RES> handler,
         HashMap<String, RouteTreeNode<T_REQ, T_RES>> pathSegmentChildNodes,
         ParametricChild<T_REQ, T_RES> parametricChild,
         RouteTreeNode<T_REQ, T_RES> wildcardChild) {
+        this.label = label;
         this.handler = handler;
         this.pathSegmentChildNodes = pathSegmentChildNodes;
         this.parametricChild = parametricChild;

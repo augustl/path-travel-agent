@@ -39,8 +39,9 @@ class RouteTreeNodeBuilder<T_REQ extends IRequest, T_RES> {
         wildcardChild = childNode;
     }
 
-    public RouteTreeNode<T_REQ, T_RES> createNode() {
+    public RouteTreeNode<T_REQ, T_RES> createNode(String label) {
         return new RouteTreeNode<T_REQ, T_RES>(
+            label,
             this.handler,
             this.pathSegmentChildNodes,
             this.parametricChild,
