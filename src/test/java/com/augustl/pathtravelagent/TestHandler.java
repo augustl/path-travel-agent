@@ -12,6 +12,11 @@ class TestHandler implements IRouteHandler<TestReq, TestRes> {
     }
 
     @Override
+    public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+        return other;
+    }
+
+    @Override
     public TestRes call(RouteMatch<TestReq> match) {
         return new TestRes(this.ret);
     }

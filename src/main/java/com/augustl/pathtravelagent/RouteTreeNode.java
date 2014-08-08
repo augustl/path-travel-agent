@@ -86,7 +86,11 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         if (other.handler == null) {
             return this.handler;
         } else {
-            return other.handler;
+            if (this.handler == null) {
+                return other.handler;
+            } else {
+                return this.handler.merge(other.handler);
+            }
         }
     }
 

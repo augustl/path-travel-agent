@@ -3,7 +3,7 @@ package com.augustl.pathtravelagent;
 import com.augustl.pathtravelagent.segment.NumberSegment;
 import org.junit.Test;
 
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static com.augustl.pathtravelagent.DefaultRouteMatcher.*;
@@ -60,6 +60,11 @@ public class PathTravelAgentTest {
             .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
+                    public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                        return other;
+                    }
+
+                    @Override
                     public TestRes call(RouteMatch<TestReq> match) {
                         return new TestRes("Hello " + match.getRequest().getExtras());
                     }
@@ -75,6 +80,11 @@ public class PathTravelAgentTest {
             .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
                 .param(new NumberSegment("projectId"), new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
+                        @Override
+                        public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                            return other;
+                        }
+
                         @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("Hello " + (match.getIntegerRouteMatchResult("projectId") + 1));
@@ -100,6 +110,11 @@ public class PathTravelAgentTest {
             .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
+                    public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                        return other;
+                    }
+
+                    @Override
                     public TestRes call(RouteMatch<TestReq> match) {
                         if (match.getRequest().getExtras() == "yay") {
                             return new TestRes("we got yay");
@@ -121,6 +136,11 @@ public class PathTravelAgentTest {
             .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
                 .param(new TestSegment("projectId", "666"), new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
+                        @Override
+                        public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                            return other;
+                        }
+
                         @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("hello " + match.getStringRouteMatchResult("projectId"));
@@ -197,6 +217,11 @@ public class PathTravelAgentTest {
             .param("/:projectId", new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
+                    public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                        return other;
+                    }
+
+                    @Override
                     public TestRes call(RouteMatch<TestReq> match) {
                         return new TestRes("hello, parametric " + match.getStringRouteMatchResult("projectId"));
                     }
@@ -243,12 +268,22 @@ public class PathTravelAgentTest {
                 .param("/:id", new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
+                        public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                            return other;
+                        }
+
+                        @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("hello, param " + match.getStringRouteMatchResult("id"));
                         }
                     })))
             .param("/:userShortname", new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
+                    @Override
+                    public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                        return other;
+                    }
+
                     @Override
                     public TestRes call(RouteMatch<TestReq> match) {
                         return new TestRes("hello, user " + match.getStringRouteMatchResult("userShortname"));
@@ -280,6 +315,11 @@ public class PathTravelAgentTest {
                 .param("/:projectId", new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
+                        public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                            return other;
+                        }
+
+                        @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("Hello, project " + match.getStringRouteMatchResult("projectId"));
                         }
@@ -303,12 +343,22 @@ public class PathTravelAgentTest {
                 .wildcard(new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
+                        public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                            return other;
+                        }
+
+                        @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("Folder " + match.getWildcardRouteMatchResult());
                         }
                     })))
             .wildcard(new RouteTreeBuilder<TestReq, TestRes>()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
+                    @Override
+                    public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                        return other;
+                    }
+
                     @Override
                     public TestRes call(RouteMatch<TestReq> match) {
                         return new TestRes("Here goes " + match.getWildcardRouteMatchResult());
@@ -333,6 +383,11 @@ public class PathTravelAgentTest {
                 .param("/:baz-id", new RouteTreeBuilder<TestReq, TestRes>()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
+                        public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                            return other;
+                        }
+
+                        @Override
                         public TestRes call(RouteMatch<TestReq> match) {
                             return new TestRes("Hello from baz with id " + match.getStringRouteMatchResult("baz-id"));
                         }
@@ -340,12 +395,22 @@ public class PathTravelAgentTest {
                     .param("/:sub-id", new RouteTreeBuilder<TestReq, TestRes>()
                         .handler(new IRouteHandler<TestReq, TestRes>() {
                             @Override
+                            public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                                return other;
+                            }
+
+                            @Override
                             public TestRes call(RouteMatch<TestReq> match) {
                                 return new TestRes("Hello from baz-sub with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
                             }
                         })
                         .path("/zing", new RouteTreeBuilder<TestReq, TestRes>()
                             .handler(new IRouteHandler<TestReq, TestRes>() {
+                                @Override
+                                public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                                    return other;
+                                }
+
                                 @Override
                                 public TestRes call(RouteMatch<TestReq> match) {
                                     return new TestRes("Hello from baz-sub zing with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
@@ -362,6 +427,11 @@ public class PathTravelAgentTest {
                 .param("/:baz-id", new RouteTreeBuilder<TestReq, TestRes>()
                     .param("/:sub-id", new RouteTreeBuilder<TestReq, TestRes>()
                         .handler(new IRouteHandler<TestReq, TestRes>() {
+                            @Override
+                            public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                                return other;
+                            }
+
                             @Override
                             public TestRes call(RouteMatch<TestReq> match) {
                                 return new TestRes("Hello from updated baz-sub with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
@@ -415,6 +485,11 @@ public class PathTravelAgentTest {
             .param("foo-id")
             .build(new IRouteHandler<TestReq, TestRes>() {
                 @Override
+                public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
+                    return other;
+                }
+
+                @Override
                 public TestRes call(RouteMatch<TestReq> match) {
                     return new TestRes("Hello, foo with id " + match.getStringRouteMatchResult("foo-id"));
                 }
@@ -427,7 +502,77 @@ public class PathTravelAgentTest {
         assertEquals(new TestRes("Hello, foo/bar!"), match(r, new TestReq("/foo/bar")));
         assertEquals(new TestRes("Hello, foo/bar/baz!"), match(r, new TestReq("/foo/bar/baz")));
         assertEquals(new TestRes("Hello, foo with id abc123"), match(r, new TestReq("/foo/abc123")));
+    }
+
+    @Test
+    public void handlerMerging() {
+        class MethodReq implements IRequest {
+            private final String method;
+            private final List<String> pathSegments;
+            public MethodReq(String method, String path) {
+                this.method = method;
+                this.pathSegments = DefaultPathToPathSegments.parse(path);
+            }
+
+            @Override
+            public List<String> getPathSegments() {
+                return this.pathSegments;
+            }
+
+            public String getMethod() {
+                return this.method;
+            }
+        }
+
+        class MergingRouteHandler implements IRouteHandler<MethodReq, TestRes> {
+            private final Map<String, TestRes> handlers;
+
+            public MergingRouteHandler(String path, TestRes response) {
+                Map<String, TestRes> theHandlers = new HashMap<String, TestRes>();
+                theHandlers.put(path, response);
+                this.handlers = Collections.unmodifiableMap(theHandlers);
+            }
+
+            public MergingRouteHandler(Map<String, TestRes> handlers) {
+                this.handlers = Collections.unmodifiableMap(handlers);
+            }
+
+            @Override
+            public IRouteHandler<MethodReq, TestRes> merge(IRouteHandler<MethodReq, TestRes> other) {
+                if (other instanceof MergingRouteHandler) {
+                    Map<String, TestRes> handlers = new HashMap<String, TestRes>();
+                    handlers.putAll(this.handlers);
+                    handlers.putAll(((MergingRouteHandler)other).handlers);
+                    return new MergingRouteHandler(handlers);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public TestRes call(RouteMatch<MethodReq> match) {
+                if (this.handlers.containsKey(match.getRequest().getMethod())) {
+                    return this.handlers.get(match.getRequest().getMethod());
+                }
+
+                return null;
+            }
+        }
 
 
+        RouteTreeNode<MethodReq, TestRes> r1 = new RouteTreeBuilder<MethodReq, TestRes>()
+            .path("/foo", new RouteTreeBuilder<MethodReq, TestRes>()
+                .handler(new MergingRouteHandler("GET", new TestRes("Responding to get"))))
+            .build();
+
+        RouteTreeNode<MethodReq, TestRes> r2 = new RouteTreeBuilder<MethodReq, TestRes>()
+            .path("/foo", new RouteTreeBuilder<MethodReq, TestRes>()
+                .handler(new MergingRouteHandler("POST", new TestRes("Responding to post"))))
+            .build();
+
+        RouteTreeNode<MethodReq, TestRes> r = r1.merge(r2);
+
+        assertEquals(new TestRes("Responding to get"), match(r, new MethodReq("GET", "/foo")));
+        assertEquals(new TestRes("Responding to post"), match(r, new MethodReq("POST", "/foo")));
     }
 }
