@@ -9,6 +9,12 @@ import static org.junit.Assert.*;
 import static com.augustl.pathtravelagent.DefaultRouteMatcher.*;
 
 public class PathTravelAgentTest {
+    private DefaultRouteMatcher<TestReq, TestRes> defaultRouteMatcher = new DefaultRouteMatcher<TestReq, TestRes>();
+
+    private TestRes match(RouteTreeNode<TestReq, TestRes> r, TestReq req) {
+        return defaultRouteMatcher.match(r, req);
+    }
+
     @Test
     public void matchesSinglePath() {
         RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
@@ -559,6 +565,9 @@ public class PathTravelAgentTest {
             }
         }
 
+        DefaultRouteMatcher<MethodReq, TestRes> drm = new DefaultRouteMatcher<MethodReq, TestRes>();
+
+
 
         RouteTreeNode<MethodReq, TestRes> r1 = new RouteTreeBuilder<MethodReq, TestRes>()
             .path("/foo", new RouteTreeBuilder<MethodReq, TestRes>()
@@ -572,7 +581,7 @@ public class PathTravelAgentTest {
 
         RouteTreeNode<MethodReq, TestRes> r = r1.merge(r2);
 
-        assertEquals(new TestRes("Responding to get"), match(r, new MethodReq("GET", "/foo")));
-        assertEquals(new TestRes("Responding to post"), match(r, new MethodReq("POST", "/foo")));
+        assertEquals(new TestRes("Responding to get"), drm.match(r, new MethodReq("GET", "/foo")));
+        assertEquals(new TestRes("Responding to post"), drm.match(r, new MethodReq("POST", "/foo")));
     }
 }

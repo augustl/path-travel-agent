@@ -2,8 +2,8 @@ package com.augustl.pathtravelagent;
 
 import java.util.List;
 
-public class DefaultRouteMatcher {
-    static <T_RES, T_REQ extends IRequest> T_RES match(final RouteTreeNode<T_REQ, T_RES> rootNode, T_REQ req) {
+public class DefaultRouteMatcher<T_REQ extends IRequest, T_RES> {
+    public T_RES match(final RouteTreeNode<T_REQ, T_RES> rootNode, T_REQ req) {
         List<String> pathSegments = req.getPathSegments();
         RouteTreeNode<T_REQ, T_RES> targetNode = rootNode;
         RouteMatchResult routeMatchResult = new RouteMatchResult();
