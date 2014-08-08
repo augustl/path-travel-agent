@@ -13,6 +13,14 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     private final ParametricChild<T_REQ, T_RES> parametricChild;
     private final RouteTreeNode<T_REQ, T_RES> wildcardChild;
 
+    public RouteTreeNode() {
+        this.label = "::ROOT::";
+        this.handler = null;
+        this.pathSegmentChildNodes = Collections.unmodifiableMap(new HashMap<String, RouteTreeNode<T_REQ, T_RES>>());
+        this.parametricChild = null;
+        this.wildcardChild = null;
+    }
+
     public RouteTreeNode(
         String label,
         IRouteHandler<T_REQ, T_RES> handler,
