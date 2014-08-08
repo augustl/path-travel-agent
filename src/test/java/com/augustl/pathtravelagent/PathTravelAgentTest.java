@@ -322,4 +322,71 @@ public class PathTravelAgentTest {
         assertEquals(new TestRes("Here goes [foo]"), match(r, new TestReq("/foo")));
         assertEquals(new TestRes("Here goes [foo, bar, baz]"), match(r, new TestReq("/foo/bar/baz")));
     }
+
+    @Test
+    public void updatingRoutes() {
+        RouteTreeNode<TestReq, TestRes> r1 = new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+                .handler(new TestHandler("Hello, foo!")))
+            .path("/baz", new RouteTreeBuilder<TestReq, TestRes>()
+                .handler(new TestHandler("Hello, baz!"))
+                .param("/:baz-id", new RouteTreeBuilder<TestReq, TestRes>()
+                    .handler(new IRouteHandler<TestReq, TestRes>() {
+                        @Override
+                        public TestRes call(RouteMatch<TestReq> match) {
+                            return new TestRes("Hello from baz with id " + match.getStringRouteMatchResult("baz-id"));
+                        }
+                    })
+                    .param("/:sub-id", new RouteTreeBuilder<TestReq, TestRes>()
+                        .handler(new IRouteHandler<TestReq, TestRes>() {
+                            @Override
+                            public TestRes call(RouteMatch<TestReq> match) {
+                                return new TestRes("Hello from baz-sub with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
+                            }
+                        })
+                        .path("/zing", new RouteTreeBuilder<TestReq, TestRes>()
+                            .handler(new IRouteHandler<TestReq, TestRes>() {
+                                @Override
+                                public TestRes call(RouteMatch<TestReq> match) {
+                                    return new TestRes("Hello from baz-sub zing with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
+                                }
+                            }))))
+                .path("/maz", new RouteTreeBuilder<TestReq, TestRes>()
+                    .handler(new TestHandler("Hello, baz/maz!"))))
+            .build();
+
+        RouteTreeNode<TestReq, TestRes> r2 = r1.merge(new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/bar", new RouteTreeBuilder<TestReq, TestRes>()
+                .handler(new TestHandler("Hello, bar!")))
+            .path("/baz", new RouteTreeBuilder<TestReq, TestRes>()
+                .param("/:baz-id", new RouteTreeBuilder<TestReq, TestRes>()
+                    .param("/:sub-id", new RouteTreeBuilder<TestReq, TestRes>()
+                        .handler(new IRouteHandler<TestReq, TestRes>() {
+                            @Override
+                            public TestRes call(RouteMatch<TestReq> match) {
+                                return new TestRes("Hello from updated baz-sub with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
+                            }
+                        })))
+                .path("/maz", new RouteTreeBuilder<TestReq, TestRes>()
+                    .handler(new TestHandler("Hello, updated baz/maz!"))))
+            .build());
+
+        assertEquals(new TestRes("Hello, foo!"), match(r1, new TestReq("/foo")));
+        assertEquals(new TestRes("Hello, baz!"), match(r1, new TestReq("/baz")));
+        assertEquals(new TestRes("Hello, baz/maz!"), match(r1, new TestReq("/baz/maz")));
+        assertEquals(new TestRes("Hello from baz with id test-123"), match(r1, new TestReq("/baz/test-123")));
+        assertEquals(new TestRes("Hello from baz-sub with baz-id test-123 and sub-id hello"), match(r1, new TestReq("/baz/test-123/hello")));
+        assertEquals(new TestRes("Hello from baz-sub zing with baz-id yo and sub-id dawg"), match(r1, new TestReq("/baz/yo/dawg/zing")));
+        assertNull(match(r1, new TestReq("/bar")));
+
+
+        assertEquals(new TestRes("Hello, foo!"), match(r2, new TestReq("/foo")));
+        assertEquals(new TestRes("Hello, baz!"), match(r2, new TestReq("/baz")));
+        assertEquals(new TestRes("Hello, updated baz/maz!"), match(r2, new TestReq("/baz/maz")));
+        assertEquals(new TestRes("Hello from baz with id test-123"), match(r2, new TestReq("/baz/test-123")));
+        assertEquals(new TestRes("Hello from updated baz-sub with baz-id test-123 and sub-id hello"), match(r2, new TestReq("/baz/test-123/hello")));
+        assertEquals(new TestRes("Hello from baz-sub zing with baz-id yo and sub-id dawg"), match(r2, new TestReq("/baz/yo/dawg/zing")));
+        assertEquals(new TestRes("Hello, bar!"), match(r2, new TestReq("/bar")));
+
+    }
 }
