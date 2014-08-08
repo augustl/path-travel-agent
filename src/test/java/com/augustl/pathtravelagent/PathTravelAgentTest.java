@@ -389,4 +389,45 @@ public class PathTravelAgentTest {
         assertEquals(new TestRes("Hello, bar!"), match(r2, new TestReq("/bar")));
 
     }
+
+    @Test
+    public void testSingleRouteBuilder() {
+        RouteTreeNode<TestReq, TestRes> r1 = new SingleRouteBuilder<TestReq, TestRes>()
+            .build(new TestHandler("Hello, root!"));
+
+        RouteTreeNode<TestReq, TestRes> r2 = new SingleRouteBuilder<TestReq, TestRes>()
+            .path("foo")
+            .build(new TestHandler("Hello, foo!"));
+
+        RouteTreeNode<TestReq, TestRes> r3 = new SingleRouteBuilder<TestReq, TestRes>()
+            .path("foo")
+            .path("bar")
+            .build(new TestHandler("Hello, foo/bar!"));
+
+        RouteTreeNode<TestReq, TestRes> r4 = new SingleRouteBuilder<TestReq, TestRes>()
+            .path("foo")
+            .path("bar")
+            .path("baz")
+            .build(new TestHandler("Hello, foo/bar/baz!"));
+
+        RouteTreeNode<TestReq, TestRes> r5 = new SingleRouteBuilder<TestReq, TestRes>()
+            .path("foo")
+            .param("foo-id")
+            .build(new IRouteHandler<TestReq, TestRes>() {
+                @Override
+                public TestRes call(RouteMatch<TestReq> match) {
+                    return new TestRes("Hello, foo with id " + match.getStringRouteMatchResult("foo-id"));
+                }
+            });
+
+        RouteTreeNode<TestReq, TestRes> r = r1.merge(r2).merge(r3).merge(r4).merge(r5);
+
+        assertEquals(new TestRes("Hello, root!"), match(r, new TestReq("/")));
+        assertEquals(new TestRes("Hello, foo!"), match(r, new TestReq("/foo")));
+        assertEquals(new TestRes("Hello, foo/bar!"), match(r, new TestReq("/foo/bar")));
+        assertEquals(new TestRes("Hello, foo/bar/baz!"), match(r, new TestReq("/foo/bar/baz")));
+        assertEquals(new TestRes("Hello, foo with id abc123"), match(r, new TestReq("/foo/abc123")));
+
+
+    }
 }
