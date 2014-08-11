@@ -31,6 +31,14 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>August Lilleaas</name>
+            <email></email>
+            <url>https://github.com/augustl</url>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
