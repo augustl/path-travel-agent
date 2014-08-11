@@ -16,6 +16,10 @@
 
     <packaging>jar</packaging>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>A path matcher. Well suited for HTTP, but also works with any request/response system.</description>
+    <url>https://github.com/augustl/path-travel-agent</url>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
