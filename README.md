@@ -18,151 +18,17 @@ Install from maven central.
 </dependency>
 ```
 
-# Note: The following docs are severely out of date! API rewrite is in progress. See the tests.
+## Example of integration
 
-## Usage
+There's a runnable test that demonstrates how to integrate path-travel-agent in a HTTP environment. You can find it here:
 
-### Generics for type safety
+https://github.com/augustl/path-travel-agent/blob/master/src/test/java/com/augustl/pathtravelagent/HttpExampleTest.java
 
-```java
- PathTravelAgent<MyReq, MyRes> pta;
-```
+## API documentation
 
-An instance of `PathTravelAgent` needs to specify the type of both the request and response objects.
+The javadoc is hosted here:
 
-### The request object
-
-`MyReq` has to implement `com.augustl.pathtravelagent.IRequest`.
-
-```java
-class MyReq implements IRequest {
-    private final String path;
-    // A bare bones request implementation
-    public MyReq(String path) {
-        this.path = path;
-    }
-
-    @Override
-    public String getPath() {
-        return this.path;
-    }
-}
-```
-
-`MyReq` can have any additional data you want to represent a request. In a HTTP scenario, you might pass in the verb/method and the value of the Accept-header.
-
-
-```java
-// A bunch of optional fields that you can use for whatever you want in your handlers.
-class MyReq implements IRequest {
-    private final String path;
-    private final String method;
-    private final String accept;
-    public MyReq(String path, String method, String accept) {
-        this.path = path;
-        this.method = method;
-        this.accept = accept;
-    }
-
-    @Override
-    public String getPath() {
-        return this.path;
-    }
-}
-```
-
-### The response object.
-
-```java
-class MyRes {
-}
-```
-
-`MyRes` can be anything you want, we don't care. The generic is only there for type safety, and we return your response as-is, without any processing.
-
-`MyRes` will probably contain information returned from calling business logic in your app, so you will probably have a field called `body` and `status` on it. But this is completely up to you.
-
-### Creating a router
-
-```java
-PathTravelAgent<MyReq, MyRes> pta = PathTravelAgent.Builder.<MyReq,MyRes>start()
-    .newRoute().buildRoute(homePageHandler)
-    .newRoute().pathSegment("projects").buildRoute(listProjectsHandler)
-    .newRoute().pathSegment("projects").numberSegment("projectId").buildRoute(showProjectHandler)
-    .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").buildRoute(listTodosHandler)
-    .build();
-
-MyRes res = pta.match(new MyReq("/projects/1/todos", "GET", "text/html"));
-```
-
-There are many ways to create a router, and the builder is the most flexible one.
-
-### Creating handlers
-
-```java
-IRouteHandler<MyReq, MyRes> listTodosHandler = new IRoutesHandler<MyReq, MyRes>() {
-    @Override
-    public MyRes call(RouteMatch<MyReq> match) {
-        // You call your own getMethod(), we don't care, we just call your handler
-        // when the path matches.
-        if (match.getRequest().getMethod() == "GET") {
-            // Fetch the value from the `numberSegment` in the route.
-            Integer projectId = match.getIntegerRouteMatchResult("projectId");
-            return new MyRes("Call business logic to get actual list of todos for " + projectId);
-        } else {
-            return null;
-        }
-    }
-}
-```
-
-Your handler gets called when the route matches, and you're respondible for doing any additional routing. Here we can see that getRequest on MyReq is called. Do whatever you want here, all we care about is that you return an instance of MyRes or null.
-
-### Creating a router with the builder (as mentioned above)
-
-```java
-PathTravelAgent.Builder.<MyReq,MyRes>start()
-    .newRoute().buildRoute(homePageHandler)
-    .newRoute().pathSegment("projects").numberSegment("projectId").pathSegment("todos").buildRoute(listTodosHandler)
-    .build();
-```
-
-### Creating a router from strings
-
-```java
-PathTravelAgent.Builder.<MyReq,MyRes>start()
-    .newRouteString("/", homePageHandler)
-    .newRouteString("/projects/$projectId/todos", listTodosHandler)
-    .build();
-```
-
-### Creating a router from data structures
-
-```java
-List<Route<MyReq, MyRes>> routes = new ArrayList<Route<MyReq, MyRes>();
-
-List<ISegment> myHomeRouteSegments = new ArrayList<ISegment>();
-routes.add(new Route<MyReq, MyRes>(myHomeRouteSegments, homePageHandler));
-
-myTodosRouteSegments = new ArrayList<ISegment>();
-myTodosRoutesSegments.add(new PathSegment("projects"));
-myTodosRoutesSegments.add(new NumberSegment("projectId"));
-myTodosRoutesSegments.add(new PathSegment("todos"));
-routes.add(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler));
-
-new PathTravelAgent<MyReq, MyRes>(routes);
-```
-
-If you mutate the lists after passing them to the `PathTravelAgent` constructor, everything will crash and burn in many horrible and creative ways.
-
-### Creating a router by combining builder and data structures
-
-```java
-PathTravelAgent.Builder.<MyReq,MyRes>start()
-    .addRoute(new Route<MyReq, MyRes>(myHomeRouteSegments, homePageHandler))
-    .addRoute(new Route<MyReq, MyRes>(myTodosRouteSegments, listTodosHandler))
-    .build();
-```
+http://docs.augustl.com/com.augustl.pathtravelagent/0.1.0/
 
 ## Performance
 
