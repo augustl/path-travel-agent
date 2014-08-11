@@ -59,18 +59,6 @@ public class RouteMatchResult {
         public void addToMatchResult(String paramName, RouteMatchResult res);
     }
 
-//    private static class SuccessResult implements IResult {
-//        @Override
-//        public boolean isSuccess() {
-//            return true;
-//        }
-//
-//        @Override
-//        public void addToMatchResult(String paramName, RouteMatchResult res) {
-//
-//        }
-//    }
-
     public static class IntegerResult implements IResult {
         private final Integer val;
         public IntegerResult(Integer val) {
