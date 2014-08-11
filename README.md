@@ -18,6 +18,12 @@ Install from maven central.
 </dependency>
 ```
 
+## Examples
+
+There's a number of unit tests that showcases the various ways to build routes and match them.
+
+https://github.com/augustl/path-travel-agent/blob/master/src/test/java/com/augustl/pathtravelagent/PathTravelAgentTest.java
+
 ## Example of integration
 
 There's a runnable test that demonstrates how to integrate path-travel-agent in a HTTP environment. You can find it here:
