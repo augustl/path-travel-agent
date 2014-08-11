@@ -23,6 +23,10 @@ public class RouteMatch<T_REQ extends IRequest> {
         return this.routeMatchResult.getStringMatch(paramName);
     }
 
+    public RouteMatchResult getRouteMatchResult() {
+        return this.routeMatchResult;
+    }
+
     public List<String> getWildcardRouteMatchResult() {
         return this.routeMatchResult.getWildcardMatches();
     }

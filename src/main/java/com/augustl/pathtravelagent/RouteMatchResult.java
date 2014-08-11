@@ -5,6 +5,7 @@ import com.augustl.pathtravelagent.segment.IParametricSegment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RouteMatchResult {
     private final HashMap<String, Integer> integerMatches = new HashMap<String, Integer>();
@@ -43,6 +44,14 @@ public class RouteMatchResult {
 
     public List<String> getWildcardMatches() {
         return this.wildcardMatches;
+    }
+
+    public Map<String,Integer> getIntegerMatches() {
+        return new HashMap<String, Integer>(this.integerMatches);
+    }
+
+    public Map<String, String> getStringMatches() {
+        return new HashMap<String, String>(this.stringMatches);
     }
 
     public static interface IResult {
