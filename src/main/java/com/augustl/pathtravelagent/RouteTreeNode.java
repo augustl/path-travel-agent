@@ -6,6 +6,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Immutable representation of a tree of routes.
+ *
+ * @param <T_REQ>
+ * @param <T_RES>
+ */
 public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     private final String label;
     private final IRouteHandler<T_REQ, T_RES> handler;
@@ -66,6 +72,19 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         return handler;
     }
 
+    /**
+     * <p>Deep left-to-right merges a node with another. Since this class is immutable, a new instance is returned, and
+     * none of the two merged instances are changed.</p>
+     *
+     * <p>How two handlers are merged is up to the handler in question. When both the source and target tree has a
+     * handler at a given point in the tree, the merge method is called on the source handler, getting the target
+     * handler passed in. The details of how this merge takes place is up to the user, no default implementation is
+     * provided.</p>
+     *
+     * @param other The (immutable) node to merge with
+     * @return The new (immutable) node
+     * @see com.augustl.pathtravelagent.IRouteHandler#merge
+     */
     public RouteTreeNode<T_REQ, T_RES> merge(RouteTreeNode<T_REQ, T_RES> other) {
         return merge(other, new ArrayList<String>());
     }

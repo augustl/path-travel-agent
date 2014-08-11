@@ -7,6 +7,15 @@ import com.augustl.pathtravelagent.segment.StringSegment;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Builds a RouteTreeNode, but for a single path, as opposed to a complete
+ * route tree.
+ *
+ * This is typically used to add a single route to an existing tree, or to
+ * create a whole array of RouteTreeNodes and merge them later.
+ *
+ * @see com.augustl.pathtravelagent.RouteTreeBuilder
+ */
 public class SingleRouteBuilder<T_REQ extends IRequest, T_RES> {
     private final List<ISegment<T_REQ, T_RES>> segments = new ArrayList<ISegment<T_REQ, T_RES>>();
 
