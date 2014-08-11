@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <p>Internal representation of the data obtained from matching a route.</p>
+ */
 public class RouteMatchResult {
     private final HashMap<String, Integer> integerMatches = new HashMap<String, Integer>();
     private final HashMap<String, String> stringMatches = new HashMap<String, String>();
@@ -54,11 +57,19 @@ public class RouteMatchResult {
         return new HashMap<String, String>(this.stringMatches);
     }
 
+    /**
+     * <p>Associates a parametric segment with a value</p>
+     */
     public static interface IResult {
         public boolean isSuccess();
         public void addToMatchResult(String paramName, RouteMatchResult res);
     }
 
+    /**
+     * <p>Internal class for associating a parametric segment with an integer value</p>
+     *
+     * @see com.augustl.pathtravelagent.segment.NumberSegment
+     */
     public static class IntegerResult implements IResult {
         private final Integer val;
         public IntegerResult(Integer val) {
@@ -76,6 +87,11 @@ public class RouteMatchResult {
         }
     }
 
+    /**
+     * <p>Internal class for associating a parametric segment with a string value</p>
+     *
+     * @see com.augustl.pathtravelagent.segment.StringSegment
+     */
     public static class StringResult implements IResult {
         private final String val;
         public StringResult(String val) {

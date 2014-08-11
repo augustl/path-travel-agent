@@ -7,10 +7,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Immutable representation of a tree of routes.
+ * The actual routes. An immutable value. Build with RouteTreeBuilder or SingleRouteBuilder.
  *
- * @param <T_REQ>
- * @param <T_RES>
+ * All the methods on this class are used when performing matching operations. The actual instance, being immutable,
+ * can be considered a raw value. Use the various builders to create instances of these.
+ *
+ * @param <T_REQ> A request object, implementing IRequest.
+ * @param <T_RES> The return value for the handler. Can be any type you want, not used for anything by PathTravelAgent.
+ * @see com.augustl.pathtravelagent.RouteTreeBuilder
+ * @see com.augustl.pathtravelagent.SingleRouteBuilder
  */
 public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
     private final String label;
@@ -40,6 +45,11 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         this.wildcardChild = wildcardChild;
     }
 
+    /**
+     * If the node has a named child, the matcher should most likely prioritize this named child over any parametric
+     * or wildcard child. For example, even if there's a parametric handler for /projects/myproj, if there happens to be
+     * a named handler for "myproj", it should take precedence over the parametric handler.
+     */
     public boolean containsPathSegmentChildNodes(String pathSegment) {
         return this.pathSegmentChildNodes.containsKey(pathSegment);
     }
@@ -48,6 +58,11 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         return this.pathSegmentChildNodes.get(pathSegment);
     }
 
+    /**
+     * If a node has a parametric child, the matcher can use this child to handle arbitrary values. For example, given
+     * the path /projects/myproj, if there is no named handler for "myproj", the parametric handler can be invoked for
+     * "myproj", giving us a named parameter containing that value.
+     */
     public boolean hasParametricChild() {
         return this.parametricChild != null;
     }
@@ -60,6 +75,11 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         return this.parametricChild.getChildNode();
     }
 
+    /**
+     * When a node has a wildcard child node, it means that the rest of the path at this point will be passed to that
+     * child, as a wildcard. For example, given the path /foo/bar/baz/maz and a wildcard handler at /foo/bar, any
+     * segment beyond /foo/bar should be passed to the wildcard child, instead of looking for further child handlers.
+     */
     public boolean hasWildcardChild() {
         return this.wildcardChild != null;
     }
@@ -68,6 +88,14 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
         return this.wildcardChild;
     }
 
+    /**
+     * This method returns a handler or null. If a node has no handler, it means the tree has no handler at this
+     * particular point. This is useful for deep trees where you only want a handler at the bottom. An example would
+     * be handling /foo/bar/baz, but not /foo/bar. The node representing the "bar" level would have a null handler in
+     * that case.
+     *
+     * @return The handler associated with this node.
+     */
     public IRouteHandler<T_REQ, T_RES> getHandler() {
         return handler;
     }
@@ -80,6 +108,9 @@ public class RouteTreeNode<T_REQ extends IRequest, T_RES> {
      * handler at a given point in the tree, the merge method is called on the source handler, getting the target
      * handler passed in. The details of how this merge takes place is up to the user, no default implementation is
      * provided.</p>
+     *
+     * <p>The other elements such as parametric routes and wildcard routes are automatically merged and can not be
+     * configured by the user.</p>
      *
      * @param other The (immutable) node to merge with
      * @return The new (immutable) node

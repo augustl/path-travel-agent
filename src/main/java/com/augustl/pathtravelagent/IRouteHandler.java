@@ -1,8 +1,7 @@
 package com.augustl.pathtravelagent;
 
 /**
- * The actual request handler, responsible for taking requests, T_REQ, and returning responses, T_RES. Also responsible
- * for merging itself with other handlers.
+ * <p>Gets invoked when a path matches. Takes a T_REQ, returns a T_RES.</p>
  *
  * @param <T_REQ> A request object, implementing IRequest.
  * @param <T_RES> The return value for the handler. Can be any type you want, not used for anything by PathTravelAgent.

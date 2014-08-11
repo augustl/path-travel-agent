@@ -2,6 +2,12 @@ package com.augustl.pathtravelagent;
 
 import java.util.List;
 
+/**
+ * <p>The default implementation of taking a RouteTreeNode and a request and returning a response.</p>
+ *
+ * @param <T_REQ> A request object, implementing IRequest.
+ * @param <T_RES> The return value for the handler. Can be any type you want, not used for anything by PathTravelAgent.
+ */
 public class DefaultRouteMatcher<T_REQ extends IRequest, T_RES> {
     public T_RES match(final RouteTreeNode<T_REQ, T_RES> rootNode, T_REQ req) {
         List<String> pathSegments = req.getPathSegments();
