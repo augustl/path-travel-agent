@@ -54,7 +54,7 @@ We spend 0.37 seconds, while [spark](https://github.com/perwendel/spark/) spends
 
 This is because the routes is stored in a bastardized radix tree. Traditionally, routers (spark included) stores the routes in an array. This means linear worst case performance. A radix trie exploits the fact that most URLs share a structure (for example, /people, /people/$personId and /people/$personId/friends), and yields O(log N) performance.
 
-The bastardized radix tree is a normal radix tree doesn't contain "parametric" nodes. When we have routes like `/people/:person-id` we can't store the dynamic parameter :person-id in the tree. Let's say we have the following routes:
+The radix tree is "bastardized" because of dynamic URLs. When we have routes like `/people/:person-id` we can't store the dynamic parameter :person-id in the tree. Let's say we have the following routes:
 
 * `/people/important`
 * `/people/:person-id`
