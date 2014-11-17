@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 
 public class HttpExampleTest {
     private DefaultRouteMatcher<HttpReq, HttpRes> defaultRouteMatcher = new DefaultRouteMatcher<HttpReq, HttpRes>();
+    private RouteTreeBuilderFactory<HttpReq, HttpRes> rf = new RouteTreeBuilderFactory<HttpReq, HttpRes>();
 
     private HttpRes match(RouteTreeNode<HttpReq, HttpRes> r, HttpReq req) {
         return defaultRouteMatcher.match(r, req);
@@ -15,8 +16,8 @@ public class HttpExampleTest {
 
     @Test
     public void testVerbMatching() {
-        RouteTreeNode<HttpReq, HttpRes> r = new RouteTreeBuilder<HttpReq, HttpRes>()
-            .path("/projects", new RouteTreeBuilder<HttpReq, HttpRes>()
+        RouteTreeNode<HttpReq, HttpRes> r = rf.builder()
+            .path("/projects", rf.builder()
                 .handler(new HttpHandler(new HashMap<String, HttpLambda>() {{
                     put("GET", new HttpLambda() {
                         @Override
@@ -31,7 +32,7 @@ public class HttpExampleTest {
                         }
                     });
                 }}))
-                .param("/:projectId", new RouteTreeBuilder<HttpReq, HttpRes>()
+                .param("/:projectId", rf.builder()
                     .handler(new HttpHandler(new HashMap<String, HttpLambda>() {{
                         put("GET", new HttpLambda() {
                             @Override

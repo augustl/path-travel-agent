@@ -10,6 +10,7 @@ import static com.augustl.pathtravelagent.DefaultRouteMatcher.*;
 
 public class PathTravelAgentTest {
     private DefaultRouteMatcher<TestReq, TestRes> defaultRouteMatcher = new DefaultRouteMatcher<TestReq, TestRes>();
+    private RouteTreeBuilderFactory<TestReq, TestRes> rf = new RouteTreeBuilderFactory<TestReq, TestRes>();
 
     private TestRes match(RouteTreeNode<TestReq, TestRes> r, TestReq req) {
         return defaultRouteMatcher.match(r, req);
@@ -17,8 +18,8 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesSinglePath() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/foo", rf.builder()
                 .handler(new TestHandler("Hello, foo!")))
             .build();
         assertEquals(match(r, new TestReq("/foo")), new TestRes("Hello, foo!"));
@@ -26,7 +27,7 @@ public class PathTravelAgentTest {
 
     @Test
     public void noRoutes() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
             .build();
 
         assertNull(match(r, new TestReq("/foo")));
@@ -34,10 +35,10 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesPathWhenMultiple() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/foo", rf.builder()
                 .handler(new TestHandler("Hello, foo!")))
-            .path("/bar", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/bar", rf.builder()
                 .handler(new TestHandler("Hello, bar!")))
             .build();
 
@@ -47,10 +48,10 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesSingleNestedPath() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
-                .path("/bar", new RouteTreeBuilder<TestReq, TestRes>()
-                    .path("/baz", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/foo", rf.builder()
+                .path("/bar", rf.builder()
+                    .path("/baz", rf.builder()
                         .handler(new TestHandler("Hello, foobarbaz!")))))
             .build();
 
@@ -62,8 +63,8 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesWithCustomRequest() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/foo", rf.builder()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
                     public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -82,9 +83,9 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesWithNumberSegment() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
-                .param(new NumberSegment("projectId"), new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/projects", rf.builder()
+                .param(new NumberSegment("projectId"), rf.builder()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -112,8 +113,8 @@ public class PathTravelAgentTest {
 
     @Test
     public void routeBasedOnRequest() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/foo", rf.builder()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
                     public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -138,9 +139,9 @@ public class PathTravelAgentTest {
 
     @Test
     public void customSegment() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
-                .param(new TestSegment("projectId", "666"), new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/projects", rf.builder()
+                .param(new TestSegment("projectId", "666"), rf.builder()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -161,14 +162,14 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesNestedPathWithParams() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/projects", rf.builder()
                 .handler(new TestHandler("projects list"))
-                .param(new NumberSegment("projectId"), new RouteTreeBuilder<TestReq, TestRes>()
+                .param(new NumberSegment("projectId"), rf.builder()
                     .handler(new TestHandler("single project"))
-                    .path("/todos", new RouteTreeBuilder<TestReq, TestRes>()
+                    .path("/todos", rf.builder()
                         .handler(new TestHandler("todos list"))
-                        .param(new NumberSegment("todoId"), new RouteTreeBuilder<TestReq, TestRes>()
+                        .param(new NumberSegment("todoId"), rf.builder()
                             .handler(new TestHandler("single todo"))))))
             .build();
 
@@ -180,17 +181,17 @@ public class PathTravelAgentTest {
 
     @Test
     public void matchesNestedTreepaths() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
-                .path("/bar", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/foo", rf.builder()
+                .path("/bar", rf.builder()
                     .handler(new TestHandler("bar"))
-                    .path("/subbar", new RouteTreeBuilder<TestReq, TestRes>()
+                    .path("/subbar", rf.builder()
                         .handler(new TestHandler("subbar"))))
-                .path("/baz", new RouteTreeBuilder<TestReq, TestRes>()
+                .path("/baz", rf.builder()
                     .handler(new TestHandler("baz"))
-                    .path("/subbaz", new RouteTreeBuilder<TestReq, TestRes>()
+                    .path("/subbaz", rf.builder()
                         .handler(new TestHandler("subbaz")))
-                    .path("/otherbaz", new RouteTreeBuilder<TestReq, TestRes>()
+                    .path("/otherbaz", rf.builder()
                         .handler(new TestHandler("otherbaz")))))
             .build();
 
@@ -204,9 +205,9 @@ public class PathTravelAgentTest {
 
     @Test
     public void rootRoute() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
             .handler(new TestHandler("root"))
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/foo", rf.builder()
                 .handler(new TestHandler("foo")))
             .build();
 
@@ -216,11 +217,11 @@ public class PathTravelAgentTest {
 
     @Test
     public void parametricSegmentAtRoot() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
             .handler(new TestHandler("root"))
-            .path("/test", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/test", rf.builder()
                 .handler(new TestHandler("hello, test")))
-            .param("/:projectId", new RouteTreeBuilder<TestReq, TestRes>()
+            .param("/:projectId", rf.builder()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
                     public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -240,13 +241,13 @@ public class PathTravelAgentTest {
 
     @Test
     public void randomizedOddInput() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
             .handler(new TestHandler("hello, root"))
-            .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/projects", rf.builder()
                 .handler(new TestHandler("hello, projects"))
-                .param("/:projectId", new RouteTreeBuilder<TestReq, TestRes>()
+                .param("/:projectId", rf.builder()
                     .handler(new TestHandler("hello, specific project"))))
-            .param("/:userShortname", new RouteTreeBuilder<TestReq, TestRes>()
+            .param("/:userShortname", rf.builder()
                 .handler(new TestHandler("hello, user page")))
             .build();
 
@@ -267,11 +268,11 @@ public class PathTravelAgentTest {
 
     @Test
     public void oddInput() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
             .handler(new TestHandler("hello, root"))
-            .path("/test", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/test", rf.builder()
                 .handler(new TestHandler("hello, test"))
-                .param("/:id", new RouteTreeBuilder<TestReq, TestRes>()
+                .param("/:id", rf.builder()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -283,7 +284,7 @@ public class PathTravelAgentTest {
                             return new TestRes("hello, param " + match.getStringRouteMatchResult("id"));
                         }
                     })))
-            .param("/:userShortname", new RouteTreeBuilder<TestReq, TestRes>()
+            .param("/:userShortname", rf.builder()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
                     public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -314,11 +315,11 @@ public class PathTravelAgentTest {
 
     @Test
     public void testAllTheThings() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
             .handler(new TestHandler("Hello, root!"))
-            .path("/projects", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/projects", rf.builder()
                 .handler(new TestHandler("Project listing"))
-                .param("/:projectId", new RouteTreeBuilder<TestReq, TestRes>()
+                .param("/:projectId", rf.builder()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -330,7 +331,7 @@ public class PathTravelAgentTest {
                             return new TestRes("Hello, project " + match.getStringRouteMatchResult("projectId"));
                         }
                     })))
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/foo", rf.builder()
                 .handler(new TestHandler("Hello, foo!")))
             .build();
 
@@ -343,10 +344,10 @@ public class PathTravelAgentTest {
 
     @Test
     public void testWildcard() {
-        RouteTreeNode<TestReq, TestRes> r = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/pictures", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r = rf.builder()
+            .path("/pictures", rf.builder()
                 .handler(new TestHandler("Hello, pictures"))
-                .wildcard(new RouteTreeBuilder<TestReq, TestRes>()
+                .wildcard(rf.builder()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -358,7 +359,7 @@ public class PathTravelAgentTest {
                             return new TestRes("Folder " + match.getWildcardRouteMatchResult());
                         }
                     })))
-            .wildcard(new RouteTreeBuilder<TestReq, TestRes>()
+            .wildcard(rf.builder()
                 .handler(new IRouteHandler<TestReq, TestRes>() {
                     @Override
                     public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -381,12 +382,12 @@ public class PathTravelAgentTest {
 
     @Test
     public void updatingRoutes() {
-        RouteTreeNode<TestReq, TestRes> r1 = new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/foo", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r1 = rf.builder()
+            .path("/foo", rf.builder()
                 .handler(new TestHandler("Hello, foo!")))
-            .path("/baz", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/baz", rf.builder()
                 .handler(new TestHandler("Hello, baz!"))
-                .param("/:baz-id", new RouteTreeBuilder<TestReq, TestRes>()
+                .param("/:baz-id", rf.builder()
                     .handler(new IRouteHandler<TestReq, TestRes>() {
                         @Override
                         public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -398,7 +399,7 @@ public class PathTravelAgentTest {
                             return new TestRes("Hello from baz with id " + match.getStringRouteMatchResult("baz-id"));
                         }
                     })
-                    .param("/:sub-id", new RouteTreeBuilder<TestReq, TestRes>()
+                    .param("/:sub-id", rf.builder()
                         .handler(new IRouteHandler<TestReq, TestRes>() {
                             @Override
                             public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -410,7 +411,7 @@ public class PathTravelAgentTest {
                                 return new TestRes("Hello from baz-sub with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
                             }
                         })
-                        .path("/zing", new RouteTreeBuilder<TestReq, TestRes>()
+                        .path("/zing", rf.builder()
                             .handler(new IRouteHandler<TestReq, TestRes>() {
                                 @Override
                                 public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -422,16 +423,16 @@ public class PathTravelAgentTest {
                                     return new TestRes("Hello from baz-sub zing with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
                                 }
                             }))))
-                .path("/maz", new RouteTreeBuilder<TestReq, TestRes>()
+                .path("/maz", rf.builder()
                     .handler(new TestHandler("Hello, baz/maz!"))))
             .build();
 
-        RouteTreeNode<TestReq, TestRes> r2 = r1.merge(new RouteTreeBuilder<TestReq, TestRes>()
-            .path("/bar", new RouteTreeBuilder<TestReq, TestRes>()
+        RouteTreeNode<TestReq, TestRes> r2 = r1.merge(rf.builder()
+            .path("/bar", rf.builder()
                 .handler(new TestHandler("Hello, bar!")))
-            .path("/baz", new RouteTreeBuilder<TestReq, TestRes>()
-                .param("/:baz-id", new RouteTreeBuilder<TestReq, TestRes>()
-                    .param("/:sub-id", new RouteTreeBuilder<TestReq, TestRes>()
+            .path("/baz", rf.builder()
+                .param("/:baz-id", rf.builder()
+                    .param("/:sub-id", rf.builder()
                         .handler(new IRouteHandler<TestReq, TestRes>() {
                             @Override
                             public IRouteHandler<TestReq, TestRes> merge(IRouteHandler<TestReq, TestRes> other) {
@@ -443,7 +444,7 @@ public class PathTravelAgentTest {
                                 return new TestRes("Hello from updated baz-sub with baz-id " + match.getStringRouteMatchResult("baz-id") + " and sub-id " + match.getStringRouteMatchResult("sub-id"));
                             }
                         })))
-                .path("/maz", new RouteTreeBuilder<TestReq, TestRes>()
+                .path("/maz", rf.builder()
                     .handler(new TestHandler("Hello, updated baz/maz!"))))
             .build());
 
