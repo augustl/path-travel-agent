@@ -13,7 +13,7 @@ Install from maven central.
 ```xml
 <dependency>
   <groupId>com.augustl</groupId>
-  <artifactId>path-travel-agent</artifactId>
+  <artifactId>pathtravelagent</artifactId>
   <version>0.1.0</version>
 </dependency>
 ```
