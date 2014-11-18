@@ -299,6 +299,7 @@ public class PathTravelAgentTest {
             .build();
 
         assertEquals(match(r, new TestReq("/")), new TestRes("hello, root"));
+
         assertEquals(match(r, new TestReq("//")), new TestRes("hello, root"));
         assertEquals(match(r, new TestReq("/test")), new TestRes("hello, test"));
         assertEquals(match(r, new TestReq("/test/")), new TestRes("hello, test"));
@@ -310,7 +311,8 @@ public class PathTravelAgentTest {
         assertEquals(match(r, new TestReq("/hmmm/")), new TestRes("hello, user hmmm"));
         assertEquals(match(r, new TestReq("/hmmm///")), new TestRes("hello, user hmmm"));
 
-
+        assertEquals(match(r, new TestReq("/?wat")), new TestRes("hello, root"));
+        assertEquals(match(r, new TestReq("/test/rawr?hmm/weird?zomg")), new TestRes("hello, param rawr"));
     }
 
     @Test
