@@ -14,7 +14,7 @@ Install from maven central.
 <dependency>
   <groupId>com.augustl</groupId>
   <artifactId>pathtravelagent</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
