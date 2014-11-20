@@ -18,6 +18,12 @@ Install from maven central.
 </dependency>
 ```
 
+## API documentation
+
+The javadoc is hosted here:
+
+http://docs.augustl.com/com.augustl.pathtravelagent/0.1.1/
+
 ## Examples
 
 There's a number of unit tests that showcases the various ways to build routes and match them.
@@ -29,12 +35,6 @@ https://github.com/augustl/path-travel-agent/blob/master/src/test/java/com/augus
 There's a runnable test that demonstrates how to integrate path-travel-agent in a HTTP environment. You can find it here:
 
 https://github.com/augustl/path-travel-agent/blob/master/src/test/java/com/augustl/pathtravelagent/HttpExampleTest.java
-
-## API documentation
-
-The javadoc is hosted here:
-
-http://docs.augustl.com/com.augustl.pathtravelagent/0.1.1/
 
 ## Benchmark
 
