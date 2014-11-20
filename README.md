@@ -34,7 +34,7 @@ https://github.com/augustl/path-travel-agent/blob/master/src/test/java/com/augus
 
 The javadoc is hosted here:
 
-http://docs.augustl.com/com.augustl.pathtravelagent/0.1.0/
+http://docs.augustl.com/com.augustl.pathtravelagent/0.1.1/
 
 ## Benchmark
 
